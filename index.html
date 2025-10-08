@@ -97,6 +97,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            width: 100%;
+            height: 100%;
         }
 
         #inicio .container {
@@ -212,16 +214,19 @@
         }
         
         #airdrops .container, #youtube .container {
-            max-width: 900px;
+            max-width: 1200px;
             width: 100%;
+            height: 80vh;
             margin: 0 auto;
             text-align: center;
-            padding: 40px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
         }
         
         #airdrops h1, #youtube h1 {
             font-size: 2.8em;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             background: linear-gradient(90deg, #d4af37, #fff, #d4af37);
             background-size: 200% auto;
             color: #000;
@@ -229,6 +234,23 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: shimmer 4s linear infinite;
+        }
+
+        #youtube .youtube-embed-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid #d4af37;
+        }
+
+        #youtube iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
 
         .airdrops-grid {
@@ -304,151 +326,6 @@
             color: #0c0c0c;
         }
         
-        .videos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-        }
-
-        .video-card {
-            background-color: rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            border-radius: 15px;
-            overflow: hidden;
-            color: #f0f0f0;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-        }
-
-        .video-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
-        }
-
-        .video-thumbnail {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-        
-        .video-title {
-            padding: 15px;
-            font-weight: bold;
-            flex-grow: 1;
-        }
-
-        .video-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 20000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .video-modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            position: relative;
-            width: 90%;
-            max-width: 1200px;
-            background-color: #1a1a1a;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
-            animation: slideUp 0.4s ease;
-        }
-
-        .modal-header {
-            background-color: #0c0c0c;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #d4af37;
-        }
-
-        .modal-title {
-            font-size: 1.3em;
-            color: #d4af37;
-            margin: 0;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            color: #d4af37;
-            font-size: 2em;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .close-modal:hover {
-            transform: scale(1.2);
-            color: #fff;
-        }
-
-        .modal-video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-        }
-
-        .modal-video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .instruction-box {
-            background-color: rgba(212, 175, 55, 0.1);
-            border: 1px solid #d4af37;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-            text-align: left;
-        }
-
-        .instruction-box h3 {
-            color: #d4af37;
-            margin-top: 0;
-        }
-
-        .instruction-box code {
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 2px 6px;
-            border-radius: 3px;
-            color: #d4af37;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from { 
-                transform: translateY(100px);
-                opacity: 0;
-            }
-            to { 
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
         @keyframes shimmer {
             to { background-position: -200% center; }
         }
@@ -544,191 +421,23 @@
         <div id="youtube" class="page-content">
             <div class="container">
                 <h1>Últimos Vídeos</h1>
-                
-                <div class="instruction-box">
-                    <h3>⚠️ Como fazer funcionar:</h3>
-                    <p><strong>Opção 1 (Recomendada):</strong> Hospede este arquivo em um servidor web (Netlify, Vercel, GitHub Pages, etc.)</p>
-                    <p><strong>Opção 2:</strong> Use um servidor local. Instale o Python e execute:</p>
-                    <code>python -m http.server 8000</code>
-                    <p style="margin-top: 10px;">Depois acesse: <code>http://localhost:8000</code></p>
-                    <p style="margin-top: 15px;"><strong>Por enquanto, veja vídeos de exemplo abaixo:</strong></p>
-                </div>
-                
-                <div class="videos-grid" id="videos-grid">
-                    <!-- Vídeos de exemplo serão inseridos aqui -->
+                <div class="youtube-embed-container">
+                    <iframe 
+                        src="https://www.youtube.com/embed/videoseries?list=UU-b9X-5E_Vzftj-4J_j_j_A" 
+                        title="Últimos vídeos do YouTube" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
                 </div>
             </div>
         </div>
     </main>
 
-    <div class="video-modal" id="video-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modal-title">Título do Vídeo</h2>
-                <button class="close-modal" id="close-modal">
-                    <i class="fa-solid fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-video-container" id="modal-video-container">
-            </div>
-        </div>
-    </div>
-
     <script>
         document.addEventListener('mousemove', e => {
             document.documentElement.style.setProperty('--cursor-x', e.clientX + 'px');
             document.documentElement.style.setProperty('--cursor-y', e.clientY + 'px');
-        });
-
-        let youtubeVideosLoaded = false;
-
-        // Vídeos de exemplo (substitua pelos seus quando hospedar)
-        const exampleVideos = [
-            {
-                videoId: 'dQw4w9WgXcQ',
-                title: 'Exemplo de Vídeo 1 - Substitua pelos seus vídeos',
-                thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg'
-            },
-            {
-                videoId: 'jNQXAC9IVRw',
-                title: 'Exemplo de Vídeo 2 - Configure a API do YouTube',
-                thumbnail: 'https://img.youtube.com/vi/jNQXAC9IVRw/maxresdefault.jpg'
-            },
-            {
-                videoId: '9bZkp7q19f0',
-                title: 'Exemplo de Vídeo 3 - Hospede em um servidor',
-                thumbnail: 'https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg'
-            }
-        ];
-
-        function loadExampleVideos() {
-            const grid = document.getElementById('videos-grid');
-            grid.innerHTML = '';
-            
-            exampleVideos.forEach(video => {
-                const videoCard = document.createElement('div');
-                videoCard.className = 'video-card';
-                videoCard.innerHTML = `
-                    <img src="${video.thumbnail}" alt="${video.title}" class="video-thumbnail">
-                    <div class="video-title">${video.title}</div>
-                `;
-                
-                videoCard.addEventListener('click', () => {
-                    openVideoModal(video.videoId, video.title);
-                });
-                
-                grid.appendChild(videoCard);
-            });
-            
-            youtubeVideosLoaded = true;
-        }
-
-        async function fetchYouTubeVideos() {
-            const apiKey = "AIzaSyCODmqh2BWn9_JFNEA97ygVbpJAvgL50hk"; 
-            const channelId = "UC-b9X-5E_Vzftj-4J_j_j_A";
-            const maxResults = 9;
-            const grid = document.getElementById('videos-grid');
-
-            // Verifica se está rodando localmente (file://)
-            if (window.location.protocol === 'file:') {
-                loadExampleVideos();
-                return;
-            }
-
-            grid.innerHTML = '<p>Carregando vídeos...</p>';
-
-            try {
-                const channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`);
-                const channelData = await channelResponse.json();
-                
-                if (channelData.error) {
-                    throw new Error(channelData.error.message);
-                }
-                
-                if (!channelData.items || channelData.items.length === 0) {
-                    throw new Error("Não foi possível encontrar detalhes do canal.");
-                }
-
-                const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
-
-                const playlistResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&key=${apiKey}&maxResults=${maxResults}`);
-                const playlistData = await playlistResponse.json();
-
-                if (playlistData.error) {
-                    throw new Error(playlistData.error.message);
-                }
-
-                grid.innerHTML = '';
-                
-                if (playlistData.items.length === 0) {
-                    grid.innerHTML = '<p>Nenhum vídeo encontrado neste canal.</p>';
-                    return;
-                }
-                
-                playlistData.items.forEach(item => {
-                    const videoId = item.snippet.resourceId.videoId;
-                    const title = item.snippet.title;
-                    const thumbnailUrl = item.snippet.thumbnails.high.url;
-
-                    const videoCard = document.createElement('div');
-                    videoCard.className = 'video-card';
-                    videoCard.innerHTML = `
-                        <img src="${thumbnailUrl}" alt="${title}" class="video-thumbnail">
-                        <div class="video-title">${title}</div>
-                    `;
-                    
-                    videoCard.addEventListener('click', () => {
-                        openVideoModal(videoId, title);
-                    });
-                    
-                    grid.appendChild(videoCard);
-                });
-
-                youtubeVideosLoaded = true;
-            } catch (error) {
-                console.error("Erro ao buscar vídeos:", error);
-                loadExampleVideos();
-            }
-        }
-
-        function openVideoModal(videoId, title) {
-            const modal = document.getElementById('video-modal');
-            const modalTitle = document.getElementById('modal-title');
-            const videoContainer = document.getElementById('modal-video-container');
-            
-            modalTitle.textContent = title;
-            videoContainer.innerHTML = `
-                <iframe 
-                    src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
-            `;
-            
-            modal.classList.add('active');
-        }
-
-        function closeVideoModal() {
-            const modal = document.getElementById('video-modal');
-            const videoContainer = document.getElementById('modal-video-container');
-            
-            modal.classList.remove('active');
-            videoContainer.innerHTML = '';
-        }
-
-        document.getElementById('close-modal').addEventListener('click', closeVideoModal);
-
-        document.getElementById('video-modal').addEventListener('click', (e) => {
-            if (e.target.id === 'video-modal') {
-                closeVideoModal();
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeVideoModal();
-            }
         });
 
         const menuIcon = document.querySelector('.menu-icon');
@@ -752,9 +461,8 @@
                 });
                 document.getElementById(targetPageId).classList.add('active');
 
-                if (targetPageId === 'youtube' && !youtubeVideosLoaded) {
-                    fetchYouTubeVideos();
-                }
+                // Não precisamos mais carregar os vídeos com uma função, 
+                // o iframe faz isso sozinho.
 
                 sideMenu.classList.remove('open');
                 mainContent.classList.remove('shifted');
@@ -763,3 +471,4 @@
     </script>
 </body>
 </html>
+
