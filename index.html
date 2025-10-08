@@ -25,10 +25,112 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
+            cursor: none; /* Esconde o cursor padrão */
+            overflow-x: hidden; /* Previne scroll horizontal */
         }
 
-        /* O container principal que centraliza tudo */
-        .container {
+        /* Cursor customizado */
+        .cursor-dot, .cursor-follower {
+            position: fixed;
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #d4af37;
+            transition: transform 0.1s ease-out;
+        }
+
+        .cursor-follower {
+            width: 30px;
+            height: 30px;
+            border: 2px solid rgba(212, 175, 55, 0.7);
+            transition: transform 0.3s ease-out, width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
+        }
+
+        .cursor-follower.hover {
+            width: 45px;
+            height: 45px;
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+        
+        /* Menu lateral */
+        .menu-icon {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 10001;
+            font-size: 1.8em;
+            color: #d4af37;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            background-color: rgba(12, 12, 12, 0.9);
+            backdrop-filter: blur(10px);
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 10000;
+            padding-top: 80px;
+        }
+
+        .side-menu.open {
+            transform: translateX(0);
+        }
+
+        .side-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .side-menu ul li a {
+            display: block;
+            padding: 20px 30px;
+            color: #f0f0f0;
+            text-decoration: none;
+            font-size: 1.2em;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .side-menu ul li a:hover {
+            background-color: #d4af37;
+            color: #0c0c0c;
+        }
+
+        main {
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            width: 100%;
+        }
+
+        main.shifted {
+            transform: translateX(125px) scale(0.9); /* Efeito de empurrar e diminuir */
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        /* Controle de exibição das páginas */
+        .page-content {
+            display: none;
+        }
+        .page-content.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Container da página de Início */
+        #inicio .container {
             max-width: 400px;
             width: 100%;
             text-align: center;
@@ -145,6 +247,100 @@
             margin-right: 12px;
             font-size: 1.4em;
         }
+        
+        /* Estilos da página de Airdrops */
+        #airdrops .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        #airdrops h1 {
+            font-size: 2.8em;
+            margin-bottom: 40px;
+            background: linear-gradient(90deg, #d4af37, #fff, #d4af37);
+            background-size: 200% auto;
+            color: #000;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 4s linear infinite;
+        }
+
+        .airdrops-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .airdrop-card {
+            background-color: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: left;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .airdrop-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .card-header h3 {
+            margin: 0;
+            font-size: 1.5em;
+            color: #d4af37;
+        }
+
+        .card-status {
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .card-status.active {
+            background-color: rgba(60, 179, 113, 0.2);
+            color: #3cb371;
+        }
+        
+        .card-status.potential {
+            background-color: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+        }
+
+        .airdrop-card p {
+            line-height: 1.6;
+            color: #cccccc;
+        }
+        
+        .card-button {
+            display: inline-block;
+            margin-top: 20px;
+            background-color: transparent;
+            color: #d4af37;
+            border: 2px solid #d4af37;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .card-button:hover {
+            background-color: #d4af37;
+            color: #0c0c0c;
+        }
 
         /* Animações */
         @keyframes shimmer {
@@ -167,21 +363,9 @@
         }
 
         @keyframes typing-and-wrap {
-            0% {
-                width: 0;
-                white-space: nowrap;
-                border-right: 3px solid #ffd700;
-            }
-            99.9% {
-                width: 100%;
-                white-space: nowrap;
-                border-right: 3px solid #ffd700;
-            }
-            100% {
-                width: 100%;
-                white-space: normal;
-                border-right: none;
-            }
+            0% { width: 0; white-space: nowrap; border-right: 3px solid #ffd700; }
+            99.9% { width: 100%; white-space: nowrap; border-right: 3px solid #ffd700; }
+            100% { width: 100%; white-space: normal; border-right: none; }
         }
 
         @keyframes blink-cursor {
@@ -192,39 +376,120 @@
 </head>
 <body>
 
-    <div class="container">
-        <!-- PONTO DE EDIÇÃO 1: Imagem de Perfil -->
-        <div class="profile-pic-wrapper">
-            <!-- Link do Discord que você forneceu -->
-            <img src="https://cdn.discordapp.com/attachments/1283975233535086614/1425421839852896287/OTTR5nIX_400x400.jpg?ex=68e78709&is=68e63589&hm=ba846bd4c8a567fd7c008b6f0a22653290fdc6b2542697171ecab254b39a5672&" alt="Foto de Perfil" class="profile-pic">
-        </div>
+    <!-- Cursor customizado -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-follower"></div>
 
-        <!-- PONTO DE EDIÇÃO 2: Seu Nome/Apelido -->
-        <h1 class="username">@PIRAQUE07</h1>
-
-        <!-- PONTO DE EDIÇÃO 3: Texto "Sobre Mim" -->
-        <p class="about-me">Salve! Me chamo Pedro, mais conhecido como Piraque ou PedrinZV. Atualmente, estou fazendo lives sobre Web3 e falando sobre o mundo da blockchain</p>
-
-        <!-- PONTO DE EDIÇÃO 4: Links das Redes Sociais -->
-        <div class="links-container">
-            <a href="https://www.twitch.tv/piraque07" class="link-button" target="_blank">
-                <i class="fa-brands fa-twitch"></i>
-                <span>Twitch</span>
-            </a>
-            <a href="https://www.youtube.com/@piraque07" class="link-button" target="_blank">
-                <i class="fa-brands fa-youtube"></i>
-                <span>Youtube</span>
-            </a>
-            <a href="https://kick.com/piraque07" class="link-button" target="_blank">
-                <i class="fa-solid fa-play"></i>
-                <span>Kick</span>
-            </a>
-            <a href="https://www.tiktok.com/@piraque07" class="link-button" target="_blank">
-                <i class="fa-brands fa-tiktok"></i>
-                <span>TikTok</span>
-            </a>
-        </div>
+    <!-- Menu -->
+    <div class="menu-icon">
+        <i class="fa-solid fa-bars"></i>
     </div>
+    <nav class="side-menu">
+        <ul>
+            <li><a href="#" data-page="inicio">Início</a></li>
+            <li><a href="#" data-page="airdrops">Airdrops</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <!-- PÁGINA INICIAL -->
+        <div id="inicio" class="page-content active">
+            <div class="container">
+                <div class="profile-pic-wrapper">
+                    <img src="https://cdn.discordapp.com/attachments/1283975233535086614/1425421839852896287/OTTR5nIX_400x400.jpg?ex=68e78709&is=68e63589&hm=ba846bd4c8a567fd7c008b6f0a22653290fdc6b2542697171ecab254b39a5672&" alt="Foto de Perfil" class="profile-pic">
+                </div>
+                <h1 class="username">@PIRAQUE07</h1>
+                <p class="about-me">Salve! Me chamo Pedro, mais conhecido como Piraque ou PedrinZV. Atualmente, estou fazendo lives sobre Web3 e falando sobre o mundo da blockchain</p>
+                <div class="links-container">
+                    <a href="https://www.twitch.tv/piraque07" class="link-button" target="_blank"><i class="fa-brands fa-twitch"></i><span>Twitch</span></a>
+                    <a href="https://www.youtube.com/@piraque07" class="link-button" target="_blank"><i class="fa-brands fa-youtube"></i><span>Youtube</span></a>
+                    <a href="https://kick.com/piraque07" class="link-button" target="_blank"><i class="fa-solid fa-play"></i><span>Kick</span></a>
+                    <a href="https://www.tiktok.com/@piraque07" class="link-button" target="_blank"><i class="fa-brands fa-tiktok"></i><span>TikTok</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- PÁGINA DE AIRDROPS -->
+        <div id="airdrops" class="page-content">
+            <div class="container">
+                <h1>Guia de Airdrops</h1>
+                <div class="airdrops-grid">
+                    <div class="airdrop-card">
+                        <div class="card-header">
+                            <h3>Projeto Exemplo 1</h3>
+                            <span class="card-status active">Ativo</span>
+                        </div>
+                        <p>Descrição breve do projeto e o que fazer para ser elegível ao airdrop. Ex: Interagir com a plataforma, fazer swaps, etc.</p>
+                        <a href="#" class="card-button" target="_blank">Participar</a>
+                    </div>
+                    <div class="airdrop-card">
+                        <div class="card-header">
+                            <h3>Projeto Exemplo 2</h3>
+                            <span class="card-status potential">Potencial</span>
+                        </div>
+                        <p>Este projeto ainda não tem token, mas usar a testnet ou acumular pontos pode garantir um airdrop futuro.</p>
+                        <a href="#" class="card-button" target="_blank">Saber Mais</a>
+                    </div>
+                    <div class="airdrop-card">
+                        <div class="card-header">
+                            <h3>Projeto Exemplo 3</h3>
+                            <span class="card-status active">Ativo</span>
+                        </div>
+                        <p>Campanha de airdrop via Galxe/Zealy. Complete as tarefas sociais e on-chain para ganhar sua parte dos tokens.</p>
+                        <a href="#" class="card-button" target="_blank">Ver Tarefas</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const dot = document.querySelector('.cursor-dot');
+        const follower = document.querySelector('.cursor-follower');
+        const links = document.querySelectorAll('a, .link-button, .menu-icon, .card-button');
+        const menuIcon = document.querySelector('.menu-icon');
+        const sideMenu = document.querySelector('.side-menu');
+        const mainContent = document.getElementById('main-content');
+        const navLinks = document.querySelectorAll('.side-menu a');
+        const pageContents = document.querySelectorAll('.page-content');
+
+        // Movimento do cursor
+        document.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            dot.style.transform = `translate(${clientX}px, ${clientY}px) translate(-50%, -50%)`;
+            follower.style.transform = `translate(${clientX}px, ${clientY}px) translate(-50%, -50%)`;
+        });
+
+        // Efeito hover do cursor
+        links.forEach(link => {
+            link.addEventListener('mouseenter', () => follower.classList.add('hover'));
+            link.addEventListener('mouseleave', () => follower.classList.remove('hover'));
+        });
+
+        // Abrir/Fechar menu
+        menuIcon.addEventListener('click', () => {
+            sideMenu.classList.toggle('open');
+            mainContent.classList.toggle('shifted');
+        });
+
+        // Navegação entre páginas
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetPageId = link.getAttribute('data-page');
+
+                // Esconde todas as páginas e mostra a página alvo
+                pageContents.forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById(targetPageId).classList.add('active');
+
+                // Fecha o menu
+                sideMenu.classList.remove('open');
+                mainContent.classList.remove('shifted');
+            });
+        });
+    </script>
 
 </body>
 </html>
