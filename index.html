@@ -473,47 +473,55 @@
         let youtubeVideosLoaded = false; // Flag para carregar os vídeos apenas uma vez
 
         async function fetchYouTubeVideos() {
-            // !! IMPORTANTE !!
-            // 1. Obtenha sua chave de API do YouTube no Google Cloud Console: https://console.cloud.google.com/apis/credentials
-            // 2. Substitua a string "SUA_CHAVE_DE_API_AQUI" pela sua chave.
             const apiKey = "AIzaSyCODmqh2BWn9_JFNEA97ygVbpJAvgL50hk"; 
-            
             const channelId = "UC-b9X-5E_Vzftj-4J_j_j_A"; // ID do seu canal (@piraque07)
-            const maxResults = 9; // Número de vídeos para mostrar
-            const apiUrl = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=${maxResults}`;
-
+            const maxResults = 9;
             const grid = document.getElementById('videos-grid');
             grid.innerHTML = '<p>Carregando vídeos...</p>';
 
             try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
+                // Passo 1: Buscar o ID da playlist de "uploads" do canal
+                const channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`);
+                const channelData = await channelResponse.json();
+                
+                if (channelData.error) {
+                    throw new Error(channelData.error.message);
+                }
 
-                if (data.error) {
-                     grid.innerHTML = `<p style="color: #ff6b6b;">Erro ao carregar vídeos: ${data.error.message}. Verifique se a Chave de API está correta.</p>`;
-                     return;
+                const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
+
+                // Passo 2: Buscar os vídeos dessa playlist
+                const playlistResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&key=${apiKey}&maxResults=${maxResults}`);
+                const playlistData = await playlistResponse.json();
+
+                if (playlistData.error) {
+                    throw new Error(playlistData.error.message);
                 }
 
                 grid.innerHTML = ''; // Limpa a mensagem de "carregando"
                 
-                data.items.forEach(item => {
-                    if (item.id.kind === "youtube#video") {
-                        const videoId = item.id.videoId;
-                        const title = item.snippet.title;
-                        const thumbnailUrl = item.snippet.thumbnails.high.url;
+                if (playlistData.items.length === 0) {
+                    grid.innerHTML = '<p>Nenhum vídeo encontrado neste canal.</p>';
+                    return;
+                }
+                
+                playlistData.items.forEach(item => {
+                    const videoId = item.snippet.resourceId.videoId;
+                    const title = item.snippet.title;
+                    const thumbnailUrl = item.snippet.thumbnails.high.url;
 
-                        const videoCard = `
-                            <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" class="video-card">
-                                <img src="${thumbnailUrl}" alt="${title}" class="video-thumbnail">
-                                <div class="video-title">${title}</div>
-                            </a>
-                        `;
-                        grid.innerHTML += videoCard;
-                    }
+                    const videoCard = `
+                        <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" class="video-card">
+                            <img src="${thumbnailUrl}" alt="${title}" class="video-thumbnail">
+                            <div class="video-title">${title}</div>
+                        </a>
+                    `;
+                    grid.innerHTML += videoCard;
                 });
-                youtubeVideosLoaded = true; // Marca que os vídeos foram carregados
+
+                youtubeVideosLoaded = true;
             } catch (error) {
-                grid.innerHTML = '<p style="color: #ff6b6b;">Não foi possível buscar os vídeos. Verifique o console para mais detalhes.</p>';
+                grid.innerHTML = `<p style="color: #ff6b6b;">Erro ao carregar vídeos: ${error.message}. Verifique se a Chave de API está correta e se as restrições de site estão configuradas.</p>`;
                 console.error("Erro ao buscar vídeos do YouTube:", error);
             }
         }
