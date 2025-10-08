@@ -473,47 +473,59 @@
         let youtubeVideosLoaded = false; // Flag para carregar os vídeos apenas uma vez
 
         async function fetchYouTubeVideos() {
-            const apiKey = "AIzaSyCODmqh2BWn9_JFNEA97ygVbpJAvgL50hk"; 
             const channelId = "UC-b9X-5E_Vzftj-4J_j_j_A"; // ID do seu canal (@piraque07)
-            const maxResults = 9;
             const grid = document.getElementById('videos-grid');
             grid.innerHTML = '<p>Carregando vídeos...</p>';
 
+            const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+            // Usando um proxy CORS mais direto e confiável para buscar o XML
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(rssUrl)}`;
+
             try {
-                // Passo 1: Buscar o ID da playlist de "uploads" do canal
-                const channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`);
-                const channelData = await channelResponse.json();
+                const response = await fetch(proxyUrl);
+                if (!response.ok) {
+                    throw new Error(`A resposta da rede não foi 'ok'. Status: ${response.status}`);
+                }
+                const xmlText = await response.text();
+
+                if (!xmlText) {
+                    throw new Error("Não foi possível carregar o feed RSS (resposta vazia do proxy).");
+                }
+
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlText, "application/xml");
                 
-                if (channelData.error) {
-                    throw new Error(channelData.error.message);
-                }
-                
-                // CORREÇÃO: Verifica se a API retornou um item para o canal
-                if (!channelData.items || channelData.items.length === 0) {
-                    throw new Error("Não foi possível encontrar detalhes do canal. Verifique se o ID do Canal está correto.");
+                const parseError = xmlDoc.querySelector("parsererror");
+                if (parseError) {
+                    console.error("Erro de parse do XML:", parseError.textContent);
+                    throw new Error("O feed RSS retornado pelo YouTube está mal formatado.");
                 }
 
-                const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
-
-                // Passo 2: Buscar os vídeos dessa playlist
-                const playlistResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&key=${apiKey}&maxResults=${maxResults}`);
-                const playlistData = await playlistResponse.json();
-
-                if (playlistData.error) {
-                    throw new Error(playlistData.error.message);
-                }
+                const entries = xmlDoc.getElementsByTagName("entry");
 
                 grid.innerHTML = ''; // Limpa a mensagem de "carregando"
-                
-                if (playlistData.items.length === 0) {
+
+                if (entries.length === 0) {
                     grid.innerHTML = '<p>Nenhum vídeo encontrado neste canal.</p>';
                     return;
                 }
-                
-                playlistData.items.forEach(item => {
-                    const videoId = item.snippet.resourceId.videoId;
-                    const title = item.snippet.title;
-                    const thumbnailUrl = item.snippet.thumbnails.high.url;
+
+                const maxResults = 9;
+                const videosToShow = Array.from(entries).slice(0, maxResults);
+
+                videosToShow.forEach(item => {
+                    const videoIdTag = item.getElementsByTagName('yt:videoId')[0];
+                    const titleTag = item.getElementsByTagName('title')[0];
+                    const thumbnailTag = item.getElementsByTagName('media:thumbnail')[0];
+
+                    if (!videoIdTag || !titleTag || !thumbnailTag) {
+                        console.warn("Item do feed está incompleto, pulando:", item);
+                        return; 
+                    }
+                    
+                    const videoId = videoIdTag.textContent;
+                    const title = titleTag.textContent;
+                    const thumbnailUrl = thumbnailTag.getAttribute("url");
 
                     const videoCard = `
                         <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" class="video-card">
@@ -526,8 +538,8 @@
 
                 youtubeVideosLoaded = true;
             } catch (error) {
-                grid.innerHTML = `<p style="color: #ff6b6b;">Erro ao carregar vídeos: ${error.message}. Verifique se a Chave de API está correta e se as restrições de site estão configuradas.</p>`;
-                console.error("Erro ao buscar vídeos do YouTube:", error);
+                grid.innerHTML = `<p style="color: #ff6b6b;">Erro ao carregar vídeos: ${error.message}.</p>`;
+                console.error("Erro ao buscar vídeos do YouTube via RSS:", error);
             }
         }
 
