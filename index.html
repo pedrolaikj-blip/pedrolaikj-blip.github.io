@@ -487,6 +487,11 @@
                 if (channelData.error) {
                     throw new Error(channelData.error.message);
                 }
+                
+                // CORREÇÃO: Verifica se a API retornou um item para o canal
+                if (!channelData.items || channelData.items.length === 0) {
+                    throw new Error("Não foi possível encontrar detalhes do canal. Verifique se o ID do Canal está correto.");
+                }
 
                 const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
 
