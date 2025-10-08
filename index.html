@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu de Links</title>
-    <!-- Adicionando a biblioteca de ícones Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Adicionando uma fonte moderna do Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
@@ -16,9 +14,7 @@
             --cursor-y: 50vh;
         }
 
-        /* Estilos gerais da página */
         body {
-            /* O gradiente radial segue o mouse usando as variáveis CSS */
             background: radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0) 25%),
                         linear-gradient(-45deg, #0c0c0c, #2c2a1a, #0c0c0c, #d4af37);
             background-size: 100% 100%, 400% 400%;
@@ -35,7 +31,6 @@
             overflow-x: hidden;
         }
         
-        /* Menu lateral */
         .menu-icon {
             position: fixed;
             top: 30px;
@@ -90,12 +85,11 @@
         }
 
         main.shifted {
-            transform: translateX(125px) scale(0.9); /* Efeito de empurrar e diminuir */
+            transform: translateX(125px) scale(0.9);
             border-radius: 20px;
             overflow: hidden;
         }
 
-        /* Controle de exibição das páginas */
         .page-content {
             display: none;
         }
@@ -105,7 +99,6 @@
             align-items: center;
         }
 
-        /* Container da página de Início */
         #inicio .container {
             max-width: 400px;
             width: 100%;
@@ -116,21 +109,19 @@
             position: relative;
         }
 
-        /* Wrapper para a foto de perfil para controlar o zoom e a borda */
         .profile-pic-wrapper {
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            border: 4px solid #d4af37; /* Borda dourada */
+            border: 4px solid #d4af37;
             margin: 0 auto 20px auto;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #0c0c0c; /* Cor de fundo caso a imagem demore a carregar */
+            background-color: #0c0c0c;
         }
 
-        /* Estilo da imagem de perfil */
         .profile-pic {
             width: 100%;
             height: 100%;
@@ -138,7 +129,6 @@
             transform: scale(1.25);
         }
 
-        /* Estilo do nome de usuário com o efeito brilhante */
         .username {
             font-size: 2em;
             font-weight: 700;
@@ -153,7 +143,6 @@
             animation: shimmer 4s linear infinite;
         }
 
-        /* Estilo da seção "Sobre Mim" com efeito de digitação */
         .about-me {
             font-size: 0.9em;
             color: #cccccc;
@@ -169,7 +158,6 @@
                 blink-cursor .75s step-end infinite;
         }
 
-        /* Container dos botões de link */
         .links-container {
             margin-top: 30px;
             display: flex;
@@ -177,7 +165,6 @@
             gap: 15px;
         }
 
-        /* Estilo de cada botão de link */
         .link-button {
             background-color: transparent;
             color: #d4af37;
@@ -224,7 +211,6 @@
             font-size: 1.4em;
         }
         
-        /* Estilos da página de Airdrops e YouTube*/
         #airdrops .container, #youtube .container {
             max-width: 900px;
             width: 100%;
@@ -318,7 +304,6 @@
             color: #0c0c0c;
         }
         
-        /* Estilos da página do YouTube */
         .videos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -330,11 +315,11 @@
             border: 1px solid rgba(212, 175, 55, 0.2);
             border-radius: 15px;
             overflow: hidden;
-            text-decoration: none;
             color: #f0f0f0;
             display: flex;
             flex-direction: column;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
         }
 
         .video-card:hover {
@@ -351,11 +336,119 @@
         .video-title {
             padding: 15px;
             font-weight: bold;
-            flex-grow: 1; /* Garante que o card ocupe o espaço */
+            flex-grow: 1;
         }
 
+        .video-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 20000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
 
-        /* Animações */
+        .video-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1200px;
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+            animation: slideUp 0.4s ease;
+        }
+
+        .modal-header {
+            background-color: #0c0c0c;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #d4af37;
+        }
+
+        .modal-title {
+            font-size: 1.3em;
+            color: #d4af37;
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #d4af37;
+            font-size: 2em;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .close-modal:hover {
+            transform: scale(1.2);
+            color: #fff;
+        }
+
+        .modal-video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .modal-video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .instruction-box {
+            background-color: rgba(212, 175, 55, 0.1);
+            border: 1px solid #d4af37;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .instruction-box h3 {
+            color: #d4af37;
+            margin-top: 0;
+        }
+
+        .instruction-box code {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #d4af37;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
         @keyframes shimmer {
             to { background-position: -200% center; }
         }
@@ -388,7 +481,6 @@
     </style>
 </head>
 <body>
-    <!-- Menu -->
     <div class="menu-icon">
         <i class="fa-solid fa-bars"></i>
     </div>
@@ -401,7 +493,6 @@
     </nav>
 
     <main id="main-content">
-        <!-- PÁGINA INICIAL -->
         <div id="inicio" class="page-content active">
             <div class="container">
                 <div class="profile-pic-wrapper">
@@ -418,7 +509,6 @@
             </div>
         </div>
 
-        <!-- PÁGINA DE AIRDROPS -->
         <div id="airdrops" class="page-content">
             <div class="container">
                 <h1>Guia de Airdrops</h1>
@@ -451,100 +541,196 @@
             </div>
         </div>
 
-        <!-- PÁGINA DO YOUTUBE -->
         <div id="youtube" class="page-content">
             <div class="container">
                 <h1>Últimos Vídeos</h1>
+                
+                <div class="instruction-box">
+                    <h3>⚠️ Como fazer funcionar:</h3>
+                    <p><strong>Opção 1 (Recomendada):</strong> Hospede este arquivo em um servidor web (Netlify, Vercel, GitHub Pages, etc.)</p>
+                    <p><strong>Opção 2:</strong> Use um servidor local. Instale o Python e execute:</p>
+                    <code>python -m http.server 8000</code>
+                    <p style="margin-top: 10px;">Depois acesse: <code>http://localhost:8000</code></p>
+                    <p style="margin-top: 15px;"><strong>Por enquanto, veja vídeos de exemplo abaixo:</strong></p>
+                </div>
+                
                 <div class="videos-grid" id="videos-grid">
-                    <!-- Os vídeos serão inseridos aqui pelo JavaScript -->
+                    <!-- Vídeos de exemplo serão inseridos aqui -->
                 </div>
             </div>
         </div>
     </main>
 
+    <div class="video-modal" id="video-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-title">Título do Vídeo</h2>
+                <button class="close-modal" id="close-modal">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-video-container" id="modal-video-container">
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Efeito de luz do mouse que atualiza as variáveis no CSS
         document.addEventListener('mousemove', e => {
             document.documentElement.style.setProperty('--cursor-x', e.clientX + 'px');
             document.documentElement.style.setProperty('--cursor-y', e.clientY + 'px');
         });
 
-        // --- LÓGICA DO YOUTUBE ---
-        let youtubeVideosLoaded = false; // Flag para carregar os vídeos apenas uma vez
+        let youtubeVideosLoaded = false;
+
+        // Vídeos de exemplo (substitua pelos seus quando hospedar)
+        const exampleVideos = [
+            {
+                videoId: 'dQw4w9WgXcQ',
+                title: 'Exemplo de Vídeo 1 - Substitua pelos seus vídeos',
+                thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg'
+            },
+            {
+                videoId: 'jNQXAC9IVRw',
+                title: 'Exemplo de Vídeo 2 - Configure a API do YouTube',
+                thumbnail: 'https://img.youtube.com/vi/jNQXAC9IVRw/maxresdefault.jpg'
+            },
+            {
+                videoId: '9bZkp7q19f0',
+                title: 'Exemplo de Vídeo 3 - Hospede em um servidor',
+                thumbnail: 'https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg'
+            }
+        ];
+
+        function loadExampleVideos() {
+            const grid = document.getElementById('videos-grid');
+            grid.innerHTML = '';
+            
+            exampleVideos.forEach(video => {
+                const videoCard = document.createElement('div');
+                videoCard.className = 'video-card';
+                videoCard.innerHTML = `
+                    <img src="${video.thumbnail}" alt="${video.title}" class="video-thumbnail">
+                    <div class="video-title">${video.title}</div>
+                `;
+                
+                videoCard.addEventListener('click', () => {
+                    openVideoModal(video.videoId, video.title);
+                });
+                
+                grid.appendChild(videoCard);
+            });
+            
+            youtubeVideosLoaded = true;
+        }
 
         async function fetchYouTubeVideos() {
-            const channelId = "UC-b9X-5E_Vzftj-4J_j_j_A"; // ID do seu canal (@piraque07)
+            const apiKey = "AIzaSyCODmqh2BWn9_JFNEA97ygVbpJAvgL50hk"; 
+            const channelId = "UC-b9X-5E_Vzftj-4J_j_j_A";
+            const maxResults = 9;
             const grid = document.getElementById('videos-grid');
+
+            // Verifica se está rodando localmente (file://)
+            if (window.location.protocol === 'file:') {
+                loadExampleVideos();
+                return;
+            }
+
             grid.innerHTML = '<p>Carregando vídeos...</p>';
 
-            const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-            // Usando um proxy CORS mais direto e confiável para buscar o XML
-            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(rssUrl)}`;
-
             try {
-                const response = await fetch(proxyUrl);
-                if (!response.ok) {
-                    throw new Error(`A resposta da rede não foi 'ok'. Status: ${response.status}`);
-                }
-                const xmlText = await response.text();
-
-                if (!xmlText) {
-                    throw new Error("Não foi possível carregar o feed RSS (resposta vazia do proxy).");
-                }
-
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+                const channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`);
+                const channelData = await channelResponse.json();
                 
-                const parseError = xmlDoc.querySelector("parsererror");
-                if (parseError) {
-                    console.error("Erro de parse do XML:", parseError.textContent);
-                    throw new Error("O feed RSS retornado pelo YouTube está mal formatado.");
+                if (channelData.error) {
+                    throw new Error(channelData.error.message);
+                }
+                
+                if (!channelData.items || channelData.items.length === 0) {
+                    throw new Error("Não foi possível encontrar detalhes do canal.");
                 }
 
-                const entries = xmlDoc.getElementsByTagName("entry");
+                const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
 
-                grid.innerHTML = ''; // Limpa a mensagem de "carregando"
+                const playlistResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&key=${apiKey}&maxResults=${maxResults}`);
+                const playlistData = await playlistResponse.json();
 
-                if (entries.length === 0) {
+                if (playlistData.error) {
+                    throw new Error(playlistData.error.message);
+                }
+
+                grid.innerHTML = '';
+                
+                if (playlistData.items.length === 0) {
                     grid.innerHTML = '<p>Nenhum vídeo encontrado neste canal.</p>';
                     return;
                 }
+                
+                playlistData.items.forEach(item => {
+                    const videoId = item.snippet.resourceId.videoId;
+                    const title = item.snippet.title;
+                    const thumbnailUrl = item.snippet.thumbnails.high.url;
 
-                const maxResults = 9;
-                const videosToShow = Array.from(entries).slice(0, maxResults);
-
-                videosToShow.forEach(item => {
-                    const videoIdTag = item.getElementsByTagName('yt:videoId')[0];
-                    const titleTag = item.getElementsByTagName('title')[0];
-                    const thumbnailTag = item.getElementsByTagName('media:thumbnail')[0];
-
-                    if (!videoIdTag || !titleTag || !thumbnailTag) {
-                        console.warn("Item do feed está incompleto, pulando:", item);
-                        return; 
-                    }
-                    
-                    const videoId = videoIdTag.textContent;
-                    const title = titleTag.textContent;
-                    const thumbnailUrl = thumbnailTag.getAttribute("url");
-
-                    const videoCard = `
-                        <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" class="video-card">
-                            <img src="${thumbnailUrl}" alt="${title}" class="video-thumbnail">
-                            <div class="video-title">${title}</div>
-                        </a>
+                    const videoCard = document.createElement('div');
+                    videoCard.className = 'video-card';
+                    videoCard.innerHTML = `
+                        <img src="${thumbnailUrl}" alt="${title}" class="video-thumbnail">
+                        <div class="video-title">${title}</div>
                     `;
-                    grid.innerHTML += videoCard;
+                    
+                    videoCard.addEventListener('click', () => {
+                        openVideoModal(videoId, title);
+                    });
+                    
+                    grid.appendChild(videoCard);
                 });
 
                 youtubeVideosLoaded = true;
             } catch (error) {
-                grid.innerHTML = `<p style="color: #ff6b6b;">Erro ao carregar vídeos: ${error.message}.</p>`;
-                console.error("Erro ao buscar vídeos do YouTube via RSS:", error);
+                console.error("Erro ao buscar vídeos:", error);
+                loadExampleVideos();
             }
         }
 
+        function openVideoModal(videoId, title) {
+            const modal = document.getElementById('video-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const videoContainer = document.getElementById('modal-video-container');
+            
+            modalTitle.textContent = title;
+            videoContainer.innerHTML = `
+                <iframe 
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            `;
+            
+            modal.classList.add('active');
+        }
 
-        // --- LÓGICA DO MENU E NAVEGAÇÃO ---
+        function closeVideoModal() {
+            const modal = document.getElementById('video-modal');
+            const videoContainer = document.getElementById('modal-video-container');
+            
+            modal.classList.remove('active');
+            videoContainer.innerHTML = '';
+        }
+
+        document.getElementById('close-modal').addEventListener('click', closeVideoModal);
+
+        document.getElementById('video-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'video-modal') {
+                closeVideoModal();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeVideoModal();
+            }
+        });
+
         const menuIcon = document.querySelector('.menu-icon');
         const sideMenu = document.querySelector('.side-menu');
         const mainContent = document.getElementById('main-content');
@@ -566,7 +752,6 @@
                 });
                 document.getElementById(targetPageId).classList.add('active');
 
-                // Carrega os vídeos do YouTube se for a primeira vez clicando na aba
                 if (targetPageId === 'youtube' && !youtubeVideosLoaded) {
                     fetchYouTubeVideos();
                 }
@@ -576,7 +761,5 @@
             });
         });
     </script>
-
 </body>
 </html>
-
