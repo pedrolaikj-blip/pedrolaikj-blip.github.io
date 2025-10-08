@@ -11,13 +11,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --cursor-x: 50vw;
+            --cursor-y: 50vh;
+        }
+
         /* Estilos gerais da página */
         body {
-            background: linear-gradient(-45deg, #0c0c0c, #2c2a1a, #0c0c0c, #d4af37); /* Gradiente animado */
-            background-size: 400% 400%;
-            animation: wave-background 15s ease infinite; /* Animação de onda */
+            /* O gradiente radial segue o mouse usando as variáveis CSS */
+            background: radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0) 25%),
+                        linear-gradient(-45deg, #0c0c0c, #2c2a1a, #0c0c0c, #d4af37);
+            background-size: 100% 100%, 400% 400%;
+            animation: wave-background 15s ease infinite;
             color: #f0f0f0;
-            font-family: 'Orbitron', sans-serif; /* Fonte com tema de tecnologia/games */
+            font-family: 'Orbitron', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,39 +32,7 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            cursor: none; /* Esconde o cursor padrão */
-            overflow-x: hidden; /* Previne scroll horizontal */
-        }
-
-        /* Cursor customizado */
-        .cursor-dot, .cursor-follower {
-            position: fixed;
-            border-radius: 50%;
-            z-index: 9999;
-            pointer-events: none;
-            top: 0;
-            left: 0;
-            transform: translate(-50%, -50%);
-        }
-
-        .cursor-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #d4af37;
-            transition: transform 0.1s ease-out;
-        }
-
-        .cursor-follower {
-            width: 30px;
-            height: 30px;
-            border: 2px solid rgba(212, 175, 55, 0.7);
-            transition: transform 0.3s ease-out, width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
-        }
-
-        .cursor-follower.hover {
-            width: 45px;
-            height: 45px;
-            background-color: rgba(212, 175, 55, 0.1);
+            overflow-x: hidden;
         }
         
         /* Menu lateral */
@@ -68,6 +43,7 @@
             z-index: 10001;
             font-size: 1.8em;
             color: #d4af37;
+            cursor: pointer;
         }
 
         .side-menu {
@@ -248,8 +224,8 @@
             font-size: 1.4em;
         }
         
-        /* Estilos da página de Airdrops */
-        #airdrops .container {
+        /* Estilos da página de Airdrops e YouTube*/
+        #airdrops .container, #youtube .container {
             max-width: 900px;
             width: 100%;
             margin: 0 auto;
@@ -257,7 +233,7 @@
             padding: 40px;
         }
         
-        #airdrops h1 {
+        #airdrops h1, #youtube h1 {
             font-size: 2.8em;
             margin-bottom: 40px;
             background: linear-gradient(90deg, #d4af37, #fff, #d4af37);
@@ -341,6 +317,43 @@
             background-color: #d4af37;
             color: #0c0c0c;
         }
+        
+        /* Estilos da página do YouTube */
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .video-card {
+            background-color: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            text-decoration: none;
+            color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        
+        .video-title {
+            padding: 15px;
+            font-weight: bold;
+            flex-grow: 1; /* Garante que o card ocupe o espaço */
+        }
+
 
         /* Animações */
         @keyframes shimmer {
@@ -348,9 +361,9 @@
         }
 
         @keyframes wave-background {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% { background-position: 100% 100%, 0% 50%; }
+            50% { background-position: 100% 100%, 100% 50%; }
+            100% { background-position: 100% 100%, 0% 50%; }
         }
 
         @keyframes button-pulse {
@@ -375,11 +388,6 @@
     </style>
 </head>
 <body>
-
-    <!-- Cursor customizado -->
-    <div class="cursor-dot"></div>
-    <div class="cursor-follower"></div>
-
     <!-- Menu -->
     <div class="menu-icon">
         <i class="fa-solid fa-bars"></i>
@@ -388,6 +396,7 @@
         <ul>
             <li><a href="#" data-page="inicio">Início</a></li>
             <li><a href="#" data-page="airdrops">Airdrops</a></li>
+            <li><a href="#" data-page="youtube">YouTube</a></li>
         </ul>
     </nav>
 
@@ -441,50 +450,102 @@
                 </div>
             </div>
         </div>
+
+        <!-- PÁGINA DO YOUTUBE -->
+        <div id="youtube" class="page-content">
+            <div class="container">
+                <h1>Últimos Vídeos</h1>
+                <div class="videos-grid" id="videos-grid">
+                    <!-- Os vídeos serão inseridos aqui pelo JavaScript -->
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
-        const dot = document.querySelector('.cursor-dot');
-        const follower = document.querySelector('.cursor-follower');
-        const links = document.querySelectorAll('a, .link-button, .menu-icon, .card-button');
+        // Efeito de luz do mouse que atualiza as variáveis no CSS
+        document.addEventListener('mousemove', e => {
+            document.documentElement.style.setProperty('--cursor-x', e.clientX + 'px');
+            document.documentElement.style.setProperty('--cursor-y', e.clientY + 'px');
+        });
+
+        // --- LÓGICA DO YOUTUBE ---
+        let youtubeVideosLoaded = false; // Flag para carregar os vídeos apenas uma vez
+
+        async function fetchYouTubeVideos() {
+            // !! IMPORTANTE !!
+            // 1. Obtenha sua chave de API do YouTube no Google Cloud Console: https://console.cloud.google.com/apis/credentials
+            // 2. Substitua a string "SUA_CHAVE_DE_API_AQUI" pela sua chave.
+            const apiKey = "AIzaSyCODmqh2BWn9_JFNEA97ygVbpJAvgL50hk"; 
+            
+            const channelId = "UC-b9X-5E_Vzftj-4J_j_j_A"; // ID do seu canal (@piraque07)
+            const maxResults = 9; // Número de vídeos para mostrar
+            const apiUrl = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=${maxResults}`;
+
+            const grid = document.getElementById('videos-grid');
+            grid.innerHTML = '<p>Carregando vídeos...</p>';
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (data.error) {
+                     grid.innerHTML = `<p style="color: #ff6b6b;">Erro ao carregar vídeos: ${data.error.message}. Verifique se a Chave de API está correta.</p>`;
+                     return;
+                }
+
+                grid.innerHTML = ''; // Limpa a mensagem de "carregando"
+                
+                data.items.forEach(item => {
+                    if (item.id.kind === "youtube#video") {
+                        const videoId = item.id.videoId;
+                        const title = item.snippet.title;
+                        const thumbnailUrl = item.snippet.thumbnails.high.url;
+
+                        const videoCard = `
+                            <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" class="video-card">
+                                <img src="${thumbnailUrl}" alt="${title}" class="video-thumbnail">
+                                <div class="video-title">${title}</div>
+                            </a>
+                        `;
+                        grid.innerHTML += videoCard;
+                    }
+                });
+                youtubeVideosLoaded = true; // Marca que os vídeos foram carregados
+            } catch (error) {
+                grid.innerHTML = '<p style="color: #ff6b6b;">Não foi possível buscar os vídeos. Verifique o console para mais detalhes.</p>';
+                console.error("Erro ao buscar vídeos do YouTube:", error);
+            }
+        }
+
+
+        // --- LÓGICA DO MENU E NAVEGAÇÃO ---
         const menuIcon = document.querySelector('.menu-icon');
         const sideMenu = document.querySelector('.side-menu');
         const mainContent = document.getElementById('main-content');
         const navLinks = document.querySelectorAll('.side-menu a');
         const pageContents = document.querySelectorAll('.page-content');
 
-        // Movimento do cursor
-        document.addEventListener('mousemove', (e) => {
-            const { clientX, clientY } = e;
-            dot.style.transform = `translate(${clientX}px, ${clientY}px) translate(-50%, -50%)`;
-            follower.style.transform = `translate(${clientX}px, ${clientY}px) translate(-50%, -50%)`;
-        });
-
-        // Efeito hover do cursor
-        links.forEach(link => {
-            link.addEventListener('mouseenter', () => follower.classList.add('hover'));
-            link.addEventListener('mouseleave', () => follower.classList.remove('hover'));
-        });
-
-        // Abrir/Fechar menu
         menuIcon.addEventListener('click', () => {
             sideMenu.classList.toggle('open');
             mainContent.classList.toggle('shifted');
         });
 
-        // Navegação entre páginas
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const targetPageId = link.getAttribute('data-page');
 
-                // Esconde todas as páginas e mostra a página alvo
                 pageContents.forEach(page => {
                     page.classList.remove('active');
                 });
                 document.getElementById(targetPageId).classList.add('active');
 
-                // Fecha o menu
+                // Carrega os vídeos do YouTube se for a primeira vez clicando na aba
+                if (targetPageId === 'youtube' && !youtubeVideosLoaded) {
+                    fetchYouTubeVideos();
+                }
+
                 sideMenu.classList.remove('open');
                 mainContent.classList.remove('shifted');
             });
