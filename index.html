@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu de Links</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="description" content="Página pessoal de Piraque07 - Lives sobre Web3 e blockchain no Twitch, YouTube, Kick e TikTok.">
+    <title>Piraque07</title>
+    
+    <!-- Favicon atualizado -->
+    <link rel="icon" href="https://p77-sign-va.tiktokcdn.com/tos-maliva-avt-0068/20143fa1e2b6137bde0de6809fcd3ec8~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=36ddf476&x-expires=1760356800&x-signature=WvkZubxrJLPSNPG6YxiFUzwluno%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=maliva" type="image/jpeg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
@@ -14,12 +18,24 @@
             --cursor-y: 50vh;
         }
 
+        /* Suporte a reduced-motion: desabilita animações se o usuário preferir */
+        @media (prefers-reduced-motion: reduce) {
+            body, .username, .about-me, .link-button {
+                animation: none !important;
+                background: #0c0c0c; /* Fallback simples para fundo */
+            }
+            .about-me {
+                border-right: none;
+                width: 100%;
+                white-space: normal;
+            }
+        }
+
         body {
-            /* Combina o efeito de luz radial com o gradiente animado de fundo */
             background: radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0) 25%),
                         linear-gradient(-45deg, #0c0c0c, #2c2a1a, #0c0c0c, #d4af37);
             background-size: 100% 100%, 400% 400%;
-            animation: wave-background 15s ease infinite;
+            animation: wave-background 15s ease infinite; /* Manter, mas respeita reduced-motion */
             color: #f0f0f0;
             font-family: 'Orbitron', sans-serif;
             display: flex;
@@ -27,26 +43,50 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 10px; /* Reduzido para mobile */
             box-sizing: border-box;
             overflow-x: hidden;
-            /* Define o cursor de seta estilizada como padrão */
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path fill="%23d4af37" stroke="%230c0c0c" stroke-width="2" d="M4 4 L24 12 L14 14 L12 24 Z" /></svg>'), auto;
+            /* Cursor dourado personalizado com fallback para o padrão */
+            cursor: url('data:image/x-icon;base64,AAACAAEAICAQAAAAAADoAgAAFgAAACgAAAAgAAAAQAAAAAEABAAAAAAAAAIAAAAAAAAAAAAAEAAAAAAAAAAAAAAAgP//AAAAFAAAAAYAAAA3AAAAPwAAACsAAABBAAAAOAAAABYAAACBAAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/-iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzElEQVRYR+2XywqAMBBEp1p73//WnsLqFhEw0E1y+L8bOUMiQ2q8xI2IICM4A4qS6Z1QENl9tA0AIA0wA5j+18L44A4QAEKAHsAfwA6w5yR8w+8AOKD1AANgBfhoC3gL+tPABjAFLHmF12hM5J5pP3gUuA0gAL/0CqwA03wR2AHm4T1wAegK620D2gN8D4j+8AuwB3gJ620Dpw52ABbAAbDmLjyFP3Q13yB/gX+dQA4oV+EwAGYAOQASQAkQAaQAEaAECBjwAxSw/zE+A5h/AEgGZgBGAJmB7vA9wASwB3gKzAA7wBDgA/ATmAFmQJz54S8gA//+D0gAOQASQAkQAd4BfQDXWJ7wH0D4EwAAAABJRU5ErkJggg=='), auto;
         }
 
-        /* Define o cursor de mira para links */
+        /* Cursor padrão para links (mãozinha no hover, como no Windows) */
         a, .link-button {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path stroke="%23d4af37" stroke-width="2" fill="none" d="M14 4 V24 M4 14 H24" /><circle cx="14" cy="14" r="6" stroke="%23d4af37" stroke-width="2" fill="none" /></svg>'), pointer;
+            cursor: pointer; /* Mãozinha clássica no hover */
         }
         
         #inicio .container {
             max-width: 400px;
             width: 100%;
             text-align: center;
-            padding: 40px 30px;
+            padding: 40px 20px; /* Reduzido padding lateral para mobile */
             background-color: transparent;
             border: none;
             position: relative;
+        }
+
+        /* Responsividade: Ajustes para mobile */
+        @media (max-width: 480px) {
+            #inicio .container {
+                padding: 30px 15px;
+                max-width: 90%;
+            }
+            .profile-pic-wrapper {
+                width: 120px; /* Menor em mobile */
+                height: 120px;
+            }
+            .username {
+                font-size: 1.5em; /* Reduzido */
+            }
+            .about-me {
+                font-size: 0.85em;
+                max-width: 100%; /* Evita overflow */
+                padding: 0 10px;
+            }
+            .link-button {
+                padding: 12px; /* Menor padding */
+                font-size: 1em;
+            }
         }
 
         .profile-pic-wrapper {
@@ -60,6 +100,7 @@
             justify-content: center;
             align-items: center;
             background-color: #0c0c0c;
+            position: relative; /* Para posicionar fallback */
         }
 
         .profile-pic {
@@ -67,6 +108,18 @@
             height: 100%;
             object-fit: cover;
             transform: scale(1.25);
+            pointer-events: none; /* Impede cliques na imagem para evitar abrir links externos */
+            display: block; /* Garante que apareça por padrão */
+        }
+
+        /* Fallback: Ícone de usuário dourado se a imagem falhar */
+        .profile-pic-fallback {
+            font-size: 4em;
+            color: #d4af37;
+            display: none; /* Escondido por padrão; só aparece se foto falhar */
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.8); /* Brilho dourado */
         }
 
         .username {
@@ -94,7 +147,7 @@
             overflow: hidden;
             text-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
             animation:
-                typing-and-wrap 7s steps(144) forwards,
+                typing-and-wrap 7s steps(var(--text-steps, 144)) forwards,
                 blink-cursor .75s step-end infinite;
         }
 
@@ -134,7 +187,8 @@
             transition: transform 0.6s ease;
         }
         
-        .link-button:hover {
+        .link-button:hover,
+        .link-button:focus {
             background-color: #d4af37;
             color: #1a1a1a;
             transform: scale(1.05);
@@ -150,7 +204,13 @@
             margin-right: 12px;
             font-size: 1.4em;
         }
+
+        .link-button:focus-visible {
+            outline: 2px solid #ffd700;
+            outline-offset: 2px;
+        }
         
+        /* Keyframes mantidos */
         @keyframes shimmer {
             to { background-position: -200% center; }
         }
@@ -186,24 +246,53 @@
     <div id="inicio">
         <div class="container">
             <div class="profile-pic-wrapper">
-                <img src="https://cdn.discordapp.com/attachments/1283975233535086614/1425421839852896287/OTTR5nIX_400x400.jpg?ex=68e78709&is=68e63589&hm=ba846bd4c8a567fd7c008b6f0a22653290fdc6b2542697171ecab254b39a5672&" alt="Foto de Perfil" class="profile-pic">
+                <!-- URL do TikTok atualizada -->
+                <img src="https://p77-sign-va.tiktokcdn.com/tos-maliva-avt-0068/20143fa1e2b6137bde0de6809fcd3ec8~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=36ddf476&x-expires=1760356800&x-signature=WvkZubxrJLPSNPG6YxiFUzwluno%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=maliva" 
+                     alt="Foto de perfil de Piraque07 (Pedro), streamer de Web3 e blockchain" 
+                     class="profile-pic" 
+                     loading="lazy"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"> <!-- Esconde img se falhar e mostra fallback -->
+                <i class="fas fa-user-circle profile-pic-fallback"></i> <!-- Fallback ícone dourado -->
             </div>
             <h1 class="username">@PIRAQUE07</h1>
-            <p class="about-me">Salve! Me chamo Pedro, mais conhecido como Piraque ou PedrinZV. Atualmente, estou fazendo lives sobre Web3 e falando sobre o mundo da blockchain</p>
+            <p class="about-me" role="status" aria-live="polite">Salve! Me chamo Pedro, mais conhecido como Piraque ou PedrinZV. Atualmente, estou fazendo lives sobre Web3 e falando sobre o mundo da blockchain</p>
             <div class="links-container">
-                <a href="https://www.twitch.tv/piraque07" class="link-button" target="_blank"><i class="fa-brands fa-twitch"></i><span>Twitch</span></a>
-                <a href="https://www.youtube.com/@piraque07" class="link-button" target="_blank"><i class="fa-brands fa-youtube"></i><span>Youtube</span></a>
-                <a href="https://kick.com/piraque07" class="link-button" target="_blank"><i class="fa-solid fa-play"></i><span>Kick</span></a>
-                <a href="https://www.tiktok.com/@piraque07" class="link-button" target="_blank"><i class="fa-brands fa-tiktok"></i><span>TikTok</span></a>
+                <a href="https://www.twitch.tv/piraque07" class="link-button" target="_blank" rel="noopener noreferrer" title="Assistir lives no Twitch"><i class="fa-brands fa-twitch"></i><span>Twitch</span></a>
+                <a href="https://www.youtube.com/@piraque07" class="link-button" target="_blank" rel="noopener noreferrer" title="Canal no YouTube"><i class="fa-brands fa-youtube"></i><span>Youtube</span></a>
+                <a href="https://kick.com/piraque07" class="link-button" target="_blank" rel="noopener noreferrer" title="Lives no Kick"><i class="fa-solid fa-play"></i><span>Kick</span></a>
+                <a href="https://www.tiktok.com/@piraque07" class="link-button" target="_blank" rel="noopener noreferrer" title="Vídeos no TikTok"><i class="fa-brands fa-tiktok"></i><span>TikTok</span></a>
             </div>
         </div>
     </div>
 
     <script>
-        // Efeito de luz do mouse que atualiza as variáveis no CSS
-        document.addEventListener('mousemove', e => {
-            document.documentElement.style.setProperty('--cursor-x', e.clientX + 'px');
-            document.documentElement.style.setProperty('--cursor-y', e.clientY + 'px');
+        // Efeito de luz do mouse otimizado com throttle (atualiza ~60fps para performance)
+        let ticking = false;
+        function updateCursor(e) {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    document.documentElement.style.setProperty('--cursor-x', e.clientX + 'px');
+                    document.documentElement.style.setProperty('--cursor-y', e.clientY + 'px');
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+        document.addEventListener('mousemove', updateCursor);
+
+        // Calcular steps dinâmico para typing (melhor manutenibilidade)
+        const aboutText = document.querySelector('.about-me');
+        const textLength = aboutText.textContent.length;
+        document.documentElement.style.setProperty('--text-steps', textLength + 10); // Buffer para segurança
+
+        // Verificação extra para fallback da imagem (se src vazio ou falha)
+        const profileImg = document.querySelector('.profile-pic');
+        profileImg.addEventListener('error', function() {
+            this.style.display = 'none';
+            this.nextElementSibling.style.display = 'flex';
+        });
+        profileImg.addEventListener('load', function() {
+            this.nextElementSibling.style.display = 'none';
         });
     </script>
 </body>
