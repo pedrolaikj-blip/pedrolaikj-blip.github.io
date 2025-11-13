@@ -53,7 +53,6 @@
             padding: 10px; /* Reduzido para mobile */
             box-sizing: border-box;
             overflow-x: hidden;
-            /* A LINHA BUGADA DO CURSOR FOI REMOVIDA DAQUI */
         }
 
         /* Cursor padrão para links (mãozinha no hover, como no Windows) */
@@ -256,7 +255,7 @@
             50% { border-color: #ffd700; }
         }
 
-        /* INÍCIO DO CSS PARA SEÇÃO "LIVE" (NOVO) */
+        /* INÍCIO DO CSS PARA SEÇÃO "LIVE" (ATUALIZADO) */
         .plataformas-section {
             margin-top: 40px;
             padding-top: 30px;
@@ -310,10 +309,30 @@
             display: block;
         }
         
+        /* NOVO CSS: Transforma a barra de info em um link clicável */
+        .stream-info-link {
+            text-decoration: none; /* Remove sublinhado */
+            color: inherit; /* Pega a cor do pai */
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+        
         .stream-info {
             padding: 12px;
             background-color: var(--mid-dark-bg);
             text-align: center;
+            transition: all 0.3s ease; /* Transição suave */
+        }
+
+        /* NOVO CSS: Efeito hover na barra de info */
+        .stream-info-link:hover .stream-info {
+            background-color: var(--primary-gold);
+        }
+        .stream-info-link:hover .stream-info h4 {
+            color: var(--dark-bg);
+        }
+         .stream-info-link:hover .stream-info h4 i {
+            color: var(--dark-bg);
         }
         
         .stream-info h4 {
@@ -323,12 +342,14 @@
             display: flex;
             align-items: center;
             justify-content: center; /* Centraliza o ícone e o nome */
+            transition: color 0.3s ease; /* Transição suave */
         }
         
         .stream-info h4 i {
             margin-right: 8px;
             color: var(--primary-gold);
             font-size: 0.9em;
+            transition: color 0.3s ease; /* Transição suave */
         }
 
         /* FIM DO CSS PARA SEÇÃO "LIVE" */
@@ -370,19 +391,23 @@
                     
                     <div class="stream-embed">
                         <div id="twitch-embed"></div>
-                        <div class="stream-info">
-                            <h4><i class="fa-brands fa-twitch"></i> piraque07</h4>
-                        </div>
+                        <a href="https://www.twitch.tv/piraque07" target="_blank" rel="noopener noreferrer" class="stream-info-link">
+                            <div class="stream-info">
+                                <h4><i class="fa-brands fa-twitch"></i> piraque07</h4>
+                            </div>
+                        </a>
                     </div>
 
                     <div class="stream-embed">
-                        <iframe src="https://kick.com/piraque07/embed"
+                        <iframe src="https://kick.com/embed/piraque07"
                                 allowfullscreen="true"
                                 allow="autoplay; fullscreen">
                         </iframe>
-                         <div class="stream-info">
-                            <h4><i class="fa-solid fa-play"></i> piraque07</h4>
-                        </div>
+                        <a href="https://kick.com/piraque07" target="_blank" rel="noopener noreferrer" class="stream-info-link">
+                            <div class="stream-info">
+                                <h4><i class="fa-solid fa-play"></i> piraque07</h4>
+                            </div>
+                        </a>
                     </div>
 
                 </div>
@@ -414,7 +439,7 @@
         const profileImg = document.querySelector('.profile-pic');
         profileImg.addEventListener('error', function() {
             this.style.display = 'none';
-            this.nextElementSibling.style.display = 'flex';
+            this.nextElementSibling.style.display='flex';
         });
         profileImg.addEventListener('load', function() {
             if(this.nextElementSibling) {
