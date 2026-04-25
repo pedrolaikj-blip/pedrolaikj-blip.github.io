@@ -1224,18 +1224,22 @@
             passInput.type = 'text'; passInput.value = pass;
         };
 
-        window.addEventListener('DOMContentLoaded', () => {
+        function restaurarDadosSalvos() {
             const savedUser = localStorage.getItem('exo_email');
             const savedPass = localStorage.getItem('exo_pass');
-            if (savedUser && savedPass) {
+            const cb = document.getElementById('auth-remember');
+            const box = document.getElementById('custom-cb');
+            if (savedUser) {
                 document.getElementById('auth-email').value = savedUser;
-                document.getElementById('auth-password').value = savedPass;
-                document.getElementById('auth-remember').checked = true;
-            } else if (savedUser) {
-                document.getElementById('auth-email').value = savedUser;
-                document.getElementById('auth-remember').checked = true;
+                cb.checked = true;
+                box.classList.add('checked');
             }
-        });
+            if (savedPass) {
+                document.getElementById('auth-password').value = savedPass;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', restaurarDadosSalvos);
 
         window.openAuthModal = function(modo) {
             document.getElementById('auth-modal').classList.add('active');
@@ -1251,6 +1255,8 @@
                 document.getElementById('btn-do-login').style.display = 'none';
                 document.getElementById('btn-do-register').style.display = 'flex';
             }
+            // Sempre restaura os dados salvos ao abrir o modal
+            restaurarDadosSalvos();
         };
 
         window.closeAuthModal = function() { document.getElementById('auth-modal').classList.remove('active'); };
@@ -1849,6 +1855,11 @@
             const box = document.getElementById('custom-cb');
             cb.checked = !cb.checked;
             box.classList.toggle('checked', cb.checked);
+            // Se desmarcou, apaga os dados salvos
+            if (!cb.checked) {
+                localStorage.removeItem('exo_email');
+                localStorage.removeItem('exo_pass');
+            }
         };
     </script>
 </body>
