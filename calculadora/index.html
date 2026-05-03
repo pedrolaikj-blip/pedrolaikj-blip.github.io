@@ -739,6 +739,9 @@
         <button class="nav-img-btn" id="nav-enchant" onclick="switchApp('enchant')" title="Encantos">
             <img src="https://i.ibb.co/Mk1H4nDT/encanttos.png" alt="Encantos">
         </button>
+        <button class="nav-img-btn" id="nav-runas" onclick="switchApp('runas')" title="Calculadora de Runas">
+            <img src="https://i.ibb.co/zhLXDHVw/RUNAS.png" alt="Calculadora de Runas" style="height: auto; width: 220px;">
+        </button>
     </div>
 
     <!-- VERIFICADOR DE STATUS ABAIXO DO MENU -->
@@ -1013,6 +1016,581 @@
     </div>
 
 
+    <!-- ===================== APP RUNAS ===================== -->
+    <div id="app-runas" class="app-section">
+
+        <div class="header-container">
+            <img src="https://i.ibb.co/qYd1M4zT/calculadora-de-runas.png" alt="Calculadora de Runas" style="height: 240px; width: auto; filter: drop-shadow(0 0 18px rgba(255,180,0,0.35)); margin-bottom: 6px;">
+            <p style="font-family: 'Cinzel Decorative', serif; color: #c8900a; font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase; margin: 0;">Simulação de profit/h · Margem de erro até 10%</p>
+        </div>
+
+        <!-- 1. Personagem -->
+        <div class="config-panel" style="flex-direction:column">
+            <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none" onclick="rToggle('r-char-body',this)">
+                <label style="cursor:pointer;margin:0"><i class="fa-solid fa-user" style="margin-right:8px;color:var(--primary)"></i>1 · Personagem</label>
+                <div style="display:flex;align-items:center;gap:10px">
+                    <span id="r-sp-badge" style="background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.3);color:var(--primary);border-radius:999px;padding:3px 12px;font-size:.72rem;font-weight:700;font-family:'Cinzel Decorative',serif;white-space:nowrap">SP máx: 1000</span>
+                    <i class="fa-solid fa-chevron-down" style="color:var(--primary);font-size:.75rem;transition:transform .25s" id="r-char-chev"></i>
+                </div>
+            </div>
+            <div id="r-char-body" style="margin-top:18px">
+                <div style="display:flex;gap:20px;flex-wrap:wrap">
+                    <div class="form-group">
+                        <label>Vocação</label>
+                        <select class="ph-select" id="r-selVoc"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Spirit inicial</label>
+                        <input type="number" id="r-inpSpirit" min="0" placeholder="Vazio = SP máximo">
+                        <div style="font-size:.68rem;color:#6b5010;margin-top:5px;font-family:'Cinzel Decorative',serif">0 = zerado · vazio = máximo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Itens -->
+        <div class="config-panel" style="flex-direction:column;margin-top:14px">
+            <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none" onclick="rToggle('r-items-body',this)">
+                <label style="cursor:pointer;margin:0"><i class="fa-solid fa-ring" style="margin-right:8px;color:var(--primary)"></i>2 · Itens de regeneração</label>
+                <i class="fa-solid fa-chevron-down" style="color:var(--primary);font-size:.75rem;transition:transform .25s"></i>
+            </div>
+            <div id="r-items-body" style="display:none;margin-top:16px">
+                <div style="overflow-x:auto">
+                    <table style="font-size:.8rem">
+                        <thead><tr>
+                            <th>Item</th><th>Qtd</th><th>+MP</th><th>/seg</th><th>Dur (min)</th><th>Preço (gps)</th><th></th>
+                        </tr></thead>
+                        <tbody id="r-itemsBody"></tbody>
+                    </table>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:12px">
+                    <button onclick="rAddItem()" style="background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.2);color:#b8860b;border-radius:8px;padding:8px 16px;font-size:.72rem;cursor:pointer;font-family:'Cinzel Decorative',serif;letter-spacing:.8px;text-transform:uppercase;transition:all .2s" onmouseover="this.style.background='rgba(255,215,0,.12)'" onmouseout="this.style.background='rgba(255,215,0,.06)'"><i class="fa-solid fa-plus" style="margin-right:4px"></i> Adicionar</button>
+                    <button onclick="rClearItems()" style="background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.2);color:#b8860b;border-radius:8px;padding:8px 16px;font-size:.72rem;cursor:pointer;font-family:'Cinzel Decorative',serif;letter-spacing:.8px;text-transform:uppercase;transition:all .2s" onmouseover="this.style.background='rgba(255,215,0,.12)'" onmouseout="this.style.background='rgba(255,215,0,.06)'">Limpar</button>
+                </div>
+                <div style="font-size:.65rem;color:#6b5010;margin-top:8px;font-family:'Cinzel Decorative',serif">Padrão: Exordian Boots (+1MP/3s) e Exordian Ring (+1MP/4s)</div>
+            </div>
+        </div>
+
+        <!-- 3. Blanks -->
+        <div class="config-panel" style="flex-direction:column;margin-top:14px">
+            <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none" onclick="rToggle('r-blanks-body',this)">
+                <label style="cursor:pointer;margin:0"><i class="fa-solid fa-scroll" style="margin-right:8px;color:var(--primary)"></i>3 · Blank Runes</label>
+                <div style="display:flex;align-items:center;gap:10px">
+                    <span id="r-blank-badge" style="background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.3);color:var(--primary);border-radius:999px;padding:3px 12px;font-size:.72rem;font-weight:700;font-family:'Cinzel Decorative',serif">7/7</span>
+                    <i class="fa-solid fa-chevron-down" style="color:var(--primary);font-size:.75rem;transition:transform .25s"></i>
+                </div>
+            </div>
+            <div id="r-blanks-body" style="display:none;margin-top:16px">
+                <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px">
+                    <span style="font-size:.68rem;color:#8a6820;font-family:'Cinzel Decorative',serif;letter-spacing:.5px;text-transform:uppercase">Selecionar tipos:</span>
+                    <div id="r-blankDots" style="display:flex;flex-wrap:wrap;gap:10px"></div>
+                </div>
+                <div id="r-blankList" style="display:flex;flex-direction:column;gap:7px"></div>
+            </div>
+        </div>
+
+        <!-- 4. Preços por carga -->
+        <div class="config-panel" style="flex-direction:column;margin-top:14px">
+            <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none" onclick="rToggle('r-runes-body',this)">
+                <label style="cursor:pointer;margin:0">
+                    <i class="fa-solid fa-wand-magic-sparkles" style="margin-right:8px;color:var(--primary)"></i>4 · Preços por carga
+                    <span id="r-fb-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#555;margin-left:10px;vertical-align:middle;transition:background .4s" title="Firebase"></span>
+                </label>
+                <i class="fa-solid fa-chevron-down" style="color:var(--primary);font-size:.75rem;transition:transform .25s" id="r-runes-chev"></i>
+            </div>
+            <div id="r-runes-body" style="margin-top:16px">
+                <div style="font-size:.68rem;color:#8a6820;margin-bottom:12px;font-family:'Cinzel Decorative',serif;letter-spacing:.4px">
+                    <i class="fa-solid fa-cloud" style="margin-right:4px;color:var(--primary)"></i>
+                    Valores sincronizados em tempo real. Admins editam · demais jogadores visualizam.
+                </div>
+                <div id="r-runePriceList"></div>
+            </div>
+        </div>
+
+        <!-- 5. Tempo -->
+        <div class="config-panel" style="align-items:flex-end;margin-top:14px">
+            <div class="form-group" style="max-width:230px">
+                <label><i class="fa-solid fa-clock" style="margin-right:5px;color:var(--primary)"></i>5 · Tempo de simulação</label>
+                <div style="display:flex">
+                    <input type="number" id="r-inpTime" value="60" min="1" style="border-radius:12px 0 0 12px">
+                    <select class="ph-select" id="r-selUnit" style="border-radius:0 12px 12px 0;border-left:none;width:80px;padding:15px 8px">
+                        <option value="min">min</option>
+                        <option value="h">h</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão -->
+        <button onclick="rRunCalc()" style="width:100%;background:linear-gradient(135deg,var(--primary),#c8780a);color:#000;font-family:'Cinzel Decorative',serif;font-size:1rem;font-weight:900;border:none;border-radius:14px;padding:18px;cursor:pointer;letter-spacing:2px;text-transform:uppercase;margin:18px 0;box-shadow:0 8px 30px rgba(255,215,0,.25);transition:opacity .2s,transform .1s" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
+            <i class="fa-solid fa-flask" style="margin-right:8px"></i> CALCULAR
+        </button>
+
+        <!-- Resultados -->
+        <div id="r-results" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
+
+    </div><!-- /app-runas -->
+
+    <script>
+    /* ============================================================
+       CALCULADORA DE RUNAS — lógica isolada (prefixo r_)
+    ============================================================ */
+    (function(){
+
+    const R_VOCATION_REGEN={
+        "Sorcerer":{mpPer:2,mpEverySec:4},"Druid":{mpPer:2,mpEverySec:4},
+        "Paladin":{mpPer:2,mpEverySec:6},"Knight":{mpPer:2,mpEverySec:8},
+        "Master Sorcerer":{mpPer:2,mpEverySec:3},"Elder Druid":{mpPer:2,mpEverySec:3},
+        "Royal Paladin":{mpPer:2,mpEverySec:4},"Elite Knight":{mpPer:2,mpEverySec:6}
+    };
+    const R_PROMOTED=new Set(["Master Sorcerer","Elder Druid","Royal Paladin","Elite Knight"]);
+    const R_VOCATIONS=Object.keys(R_VOCATION_REGEN);
+
+    const R_BLANK_TYPES=[
+        {id:"gray",name:"Gray Blank",color:"#888787",def:50},
+        {id:"red",name:"Red Blank",color:"#c94040",def:30},
+        {id:"blue",name:"Blue Blank",color:"#3a78c9",def:30},
+        {id:"purple",name:"Purple Blank",color:"#8a4ac9",def:20},
+        {id:"green",name:"Green Blank",color:"#3a9c6a",def:20},
+        {id:"yellow",name:"Yellow Blank",color:"#c9973a",def:40},
+        {id:"cyan",name:"Cyan Blank",color:"#3ac9c9",def:30}
+    ];
+
+    const R_SPELLS=[
+        {id:"animdead",name:"Animate Dead",mana:300,spirit:4,charges:2,blank:"purple",vocs:["Sorcerer","Druid","Master Sorcerer","Elder Druid"]},
+        {id:"df",name:"Destroy Field",mana:60,spirit:3,charges:3,blank:"gray",vocs:["Sorcerer","Druid","Paladin","Master Sorcerer","Elder Druid","Royal Paladin"]},
+        {id:"desintegrate",name:"Desintegrate",mana:100,spirit:3,charges:3,blank:"purple",vocs:["Sorcerer","Druid","Paladin","Master Sorcerer","Elder Druid","Royal Paladin"]},
+        {id:"firefield",name:"Fire Field",mana:60,spirit:2,charges:3,blank:"red",vocs:["Sorcerer","Druid","Master Sorcerer","Elder Druid"]},
+        {id:"firewall",name:"Fire Wall",mana:200,spirit:5,charges:4,blank:"red",vocs:["Sorcerer","Druid","Master Sorcerer","Elder Druid"]},
+        {id:"firebomb",name:"Fire Bomb",mana:150,spirit:5,charges:2,blank:"red",vocs:["Sorcerer","Druid","Master Sorcerer","Elder Druid"]},
+        {id:"poisonfield",name:"Poison Field",mana:50,spirit:2,charges:3,blank:"green",vocs:["Sorcerer","Druid","Master Sorcerer","Elder Druid"]},
+        {id:"poisonwall",name:"Poison Wall",mana:160,spirit:5,charges:4,blank:"green",vocs:["Sorcerer","Druid","Master Sorcerer","Elder Druid"]},
+        {id:"poisonbomb",name:"Poison Bomb",mana:130,spirit:5,charges:3,blank:"green",vocs:["Druid","Elder Druid"]},
+        {id:"energyfield",name:"Energy Field",mana:80,spirit:4,charges:3,blank:"cyan",vocs:["Sorcerer","Druid","Master Sorcerer","Elder Druid"]},
+        {id:"energywall",name:"Energy Wall",mana:250,spirit:5,charges:4,blank:"cyan",vocs:["Sorcerer","Druid","Master Sorcerer","Elder Druid"]},
+        {id:"energybomb",name:"Energy Bomb",mana:220,spirit:5,charges:2,blank:"gray",vocs:["Sorcerer","Master Sorcerer"]},
+        {id:"mw",name:"Magic Wall",mana:250,spirit:8,charges:3,blank:"yellow",vocs:["Sorcerer","Master Sorcerer"]},
+        {id:"lmm",name:"Light Magic Missile",mana:30,spirit:2,charges:10,blank:null,vocs:["Sorcerer","Druid","Paladin","Master Sorcerer","Elder Druid","Royal Paladin"]},
+        {id:"hmm",name:"Heavy Magic Missile",mana:70,spirit:4,charges:5,blank:"purple",vocs:["Sorcerer","Druid","Paladin","Master Sorcerer","Elder Druid","Royal Paladin"]},
+        {id:"fireball",name:"Fireball",mana:60,spirit:4,charges:6,blank:"red",vocs:["Sorcerer","Druid","Paladin","Master Sorcerer","Elder Druid","Royal Paladin"]},
+        {id:"gfb",name:"Great Fireball",mana:120,spirit:7,charges:2,blank:"red",vocs:["Sorcerer","Master Sorcerer","Druid","Elder Druid"]},
+        {id:"avalanche",name:"Avalanche",mana:140,spirit:7,charges:2,blank:"blue",vocs:["Druid","Elder Druid"]},
+        {id:"icicle",name:"Icicle Rune",mana:80,spirit:4,charges:5,blank:"blue",vocs:["Druid","Elder Druid"]},
+        {id:"explo",name:"Explosion",mana:180,spirit:7,charges:3,blank:"purple",vocs:["Sorcerer","Druid","Master Sorcerer","Elder Druid"]},
+        {id:"soulfire",name:"Soulfire",mana:150,spirit:6,charges:3,blank:"red",vocs:["Sorcerer","Druid","Master Sorcerer","Elder Druid"]},
+        {id:"sd",name:"Sudden Death",mana:220,spirit:10,charges:1,blank:"gray",vocs:["Sorcerer","Master Sorcerer"]},
+        {id:"uh",name:"Ultimate Healing Rune",mana:100,spirit:6,charges:1,blank:"gray",vocs:["Druid","Elder Druid"]},
+        {id:"ih",name:"Intense Healing Rune",mana:60,spirit:3,charges:2,blank:"gray",vocs:["Druid","Elder Druid"]},
+        {id:"antidote",name:"Antidote Rune",mana:50,spirit:2,charges:1,blank:"gray",vocs:["Druid","Elder Druid"]},
+        {id:"conj_arrow",name:"Conjure Arrow",mana:40,spirit:2,charges:15,blank:null,vocs:["Paladin","Royal Paladin"]},
+        {id:"conj_bolt",name:"Conjure Bolt",mana:70,spirit:3,charges:10,blank:null,vocs:["Paladin","Royal Paladin"]},
+        {id:"conj_poison_arrow",name:"Conjure Poison Arrow",mana:70,spirit:2,charges:5,blank:null,vocs:["Paladin","Royal Paladin"]},
+        {id:"conj_expl_arrow",name:"Conjure Explosive Arrow",mana:120,spirit:5,charges:8,blank:null,vocs:["Paladin","Royal Paladin"]},
+        {id:"conj_sniper",name:"Conjure Sniper Arrow",mana:150,spirit:4,charges:8,blank:null,vocs:["Paladin","Royal Paladin"]},
+        {id:"conj_power_bolt",name:"Conjure Power Bolt",mana:200,spirit:8,charges:6,blank:null,vocs:["Royal Paladin"]},
+        {id:"conj_diamond",name:"Conjure Diamond Arrow",mana:500,spirit:10,charges:12,blank:null,vocs:["Paladin","Royal Paladin"]}
+    ];
+
+    const R_SAFEZONE_TIERS=[
+        {label:"30 dias — 900 pts",points:900,hours:720},
+        {label:"7 dias — 250 pts",points:250,hours:168},
+        {label:"3 dias — 150 pts",points:150,hours:72},
+        {label:"24 horas — 90 pts",points:90,hours:24},
+        {label:"12 horas — 50 pts",points:50,hours:12},
+        {label:"6 horas — 30 pts",points:30,hours:6}
+    ];
+
+    const R_DEFAULT={lmm:1,hmm:15,uh:100,sd:210,gfb:60,avalanche:65,explo:50,icicle:17};
+
+    /* STATE */
+    let RS={
+        voc:"Master Sorcerer",spiritStart:"",time:60,unit:"min",
+        blankPrices:{},runePrices:{...R_DEFAULT},
+        items:[
+            {name:"Exordian Boots",qty:1,plusMp:1,perSec:3,durationMin:null,price:null},
+            {name:"Exordian Ring",qty:1,plusMp:1,perSec:4,durationMin:null,price:null}
+        ],
+        results:null,tab:"ranking",coinPrice:"",safeRune:"best",safeTier:900,safeResult:null,
+        selBlanks:new Set(["gray","red","blue","purple","green","yellow","cyan"]),
+        isAdmin:false
+    };
+
+    /* HELPERS */
+    const rfmt=n=>isFinite(n)?new Intl.NumberFormat('pt-BR',{maximumFractionDigits:0}).format(Math.round(n)):'∞';
+    const rSpMax=v=>R_PROMOTED.has(v)?1000:500;
+    const rSpells=v=>R_SPELLS.filter(s=>s.vocs.includes(v));
+    const rBlankColor=id=>R_BLANK_TYPES.find(b=>b.id===id)?.color??'#888';
+    const rBlankName=id=>R_BLANK_TYPES.find(b=>b.id===id)?.name??'sem blank';
+    const rBlankDef=id=>R_BLANK_TYPES.find(b=>b.id===id)?.def??0;
+    const rGetBlank=id=>{if(!id)return 0;const k='b_'+id;return RS.blankPrices[k]??rBlankDef(id)};
+    const rGetPrice=id=>+(RS.runePrices[id]??0);
+    const rhhmm=h=>{if(!isFinite(h)||h<0)return'∞';const m=Math.round(h*60),hh=Math.floor(m/60),mm=m%60;return`${hh}h ${mm}m`};
+
+    /* COLLAPSE */
+    window.rToggle=function(bodyId,hdr){
+        const body=document.getElementById(bodyId);
+        const chev=hdr.querySelector('.fa-chevron-down');
+        const open=body.style.display!=='none';
+        body.style.display=open?'none':'block';
+        if(chev)chev.style.transform=open?'':'rotate(180deg)';
+    };
+
+    /* SIMULATE */
+    function rSimulate(spell,minutes){
+        const voc=RS.voc,sMax=rSpMax(voc);
+        const spS=RS.spiritStart===''?sMax:Math.max(0,Math.min(sMax,+RS.spiritStart));
+        const secs=Math.max(1,Math.round(minutes*60));
+        const{mpPer,mpEverySec}=R_VOCATION_REGEN[voc];
+        const baseSec=mpPer/mpEverySec;
+        const itemSec=RS.items.reduce((a,it)=>a+(+it.qty||0)*(+it.plusMp||0)/Math.max(1,+it.perSec||1),0);
+        let sp=spS,mana=0,casts=0;
+        for(let t=0;t<secs;t++){
+            const f=0.5+0.5*(sp/sMax);mana+=(baseSec+itemSec)*f;
+            let g=0;while(mana>=spell.mana&&g<1000){mana-=spell.mana;sp=Math.max(0,sp-spell.spirit);casts++;g++}
+        }
+        const tc=casts*spell.charges,rev=tc*rGetPrice(spell.id);
+        const bc=spell.blank?casts*rGetBlank(spell.blank):0;
+        const ic=RS.items.reduce((a,it)=>{
+            const qty=+it.qty||0;if(!qty)return a;
+            const pr=it.price!=null?+it.price:null,dr=it.durationMin!=null?+it.durationMin:null;
+            if(pr!=null&&dr!=null&&dr>0)return a+qty*pr*Math.min(1,Math.max(0,minutes)/dr);
+            return a;
+        },0);
+        const profit=rev-bc-ic;
+        return{casts,tc,rev,bc,ic,profit,ph:profit*(60/minutes),ch:(tc/minutes)*60,spF:Math.round(sp),spS};
+    }
+
+    /* VOC SELECT */
+    function rInitVoc(){
+        const sel=document.getElementById('r-selVoc');
+        if(!sel)return;
+        sel.innerHTML=R_VOCATIONS.map(v=>`<option${v===RS.voc?' selected':''}>${v}</option>`).join('');
+        sel.addEventListener('change',e=>{RS.voc=e.target.value;RS.results=null;RS.safeResult=null;rUpdateSpBadge();rRenderRunePrices();document.getElementById('r-results').innerHTML='';});
+        rUpdateSpBadge();
+    }
+    function rUpdateSpBadge(){
+        const b=document.getElementById('r-sp-badge');
+        if(b)b.textContent='SP máx: '+rSpMax(RS.voc);
+    }
+
+    /* ITEMS */
+    function rRenderItems(){
+        const body=document.getElementById('r-itemsBody');if(!body)return;
+        if(!RS.items.length){body.innerHTML=`<tr><td colspan="7" style="color:#5a4010;font-size:.75rem;padding:12px 8px;font-family:'Cinzel Decorative',serif">Nenhum item.</td></tr>`;return}
+        body.innerHTML=RS.items.map((it,i)=>`<tr>
+            <td><input type="text" class="ri-name" data-i="${i}" value="${it.name??''}" style="min-width:110px"></td>
+            <td><input type="number" class="ri-qty" data-i="${i}" min="0" value="${it.qty??1}" style="width:52px"></td>
+            <td><input type="number" class="ri-plus" data-i="${i}" min="0" step="0.1" value="${it.plusMp??1}" style="width:58px"></td>
+            <td><input type="number" class="ri-persec" data-i="${i}" min="1" step="0.1" value="${it.perSec??3}" style="width:58px"></td>
+            <td><input type="number" class="ri-dur" data-i="${i}" min="0" placeholder="—" value="${it.durationMin??''}" style="width:70px"></td>
+            <td><input type="number" class="ri-price" data-i="${i}" min="0" placeholder="—" value="${it.price??''}" style="width:86px"></td>
+            <td><button class="ri-del" data-i="${i}" style="background:transparent;border:1px solid transparent;color:#6b5010;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:.85rem;transition:all .15s" onmouseover="this.style.color='#ff3333'" onmouseout="this.style.color='#6b5010'">✕</button></td>
+        </tr>`).join('');
+        body.querySelectorAll('.ri-name').forEach(i=>i.addEventListener('input',e=>{RS.items[+e.target.dataset.i].name=e.target.value}));
+        body.querySelectorAll('.ri-qty').forEach(i=>i.addEventListener('input',e=>{RS.items[+e.target.dataset.i].qty=+e.target.value}));
+        body.querySelectorAll('.ri-plus').forEach(i=>i.addEventListener('input',e=>{RS.items[+e.target.dataset.i].plusMp=+e.target.value}));
+        body.querySelectorAll('.ri-persec').forEach(i=>i.addEventListener('input',e=>{RS.items[+e.target.dataset.i].perSec=+e.target.value}));
+        body.querySelectorAll('.ri-dur').forEach(i=>i.addEventListener('input',e=>{RS.items[+e.target.dataset.i].durationMin=e.target.value===''?null:+e.target.value}));
+        body.querySelectorAll('.ri-price').forEach(i=>i.addEventListener('input',e=>{RS.items[+e.target.dataset.i].price=e.target.value===''?null:+e.target.value}));
+        body.querySelectorAll('.ri-del').forEach(b=>b.addEventListener('click',e=>{RS.items.splice(+e.currentTarget.dataset.i,1);rRenderItems()}));
+    }
+    window.rAddItem=function(){RS.items.push({name:'Novo Item',qty:1,plusMp:1,perSec:3,durationMin:null,price:null});rRenderItems()};
+    window.rClearItems=function(){RS.items=[];rRenderItems()};
+
+    /* BLANKS */
+    function rRenderBlanks(){
+        const dots=document.getElementById('r-blankDots');
+        const list=document.getElementById('r-blankList');
+        const badge=document.getElementById('r-blank-badge');
+        if(!dots||!list)return;
+        badge.textContent=RS.selBlanks.size+'/7';
+        dots.innerHTML=R_BLANK_TYPES.map(bt=>{
+            const sel=RS.selBlanks.has(bt.id);
+            return`<button data-bid="${bt.id}" title="${bt.name}" style="width:26px;height:26px;border-radius:50%;background:${bt.color};border:${sel?'2.5px solid #fff':'2.5px solid transparent'};cursor:pointer;position:relative;box-shadow:${sel?'0 0 0 3px rgba(255,255,255,.15)':'none'};transition:all .15s;flex-shrink:0" onclick="rToggleBlank('${bt.id}')">
+                <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:900;opacity:${sel?1:0}">✓</span>
+            </button>`;
+        }).join('');
+        const active=R_BLANK_TYPES.filter(bt=>RS.selBlanks.has(bt.id));
+        list.innerHTML=active.length?active.map(bt=>{
+            const k='b_'+bt.id,val=RS.blankPrices[k]??bt.def;
+            const sc=R_SPELLS.filter(s=>s.blank===bt.id).length;
+            return`<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:linear-gradient(180deg,rgba(14,9,2,.98),rgba(10,6,1,.96));border-radius:10px;border:1px solid rgba(130,85,0,.2)">
+                <div style="width:10px;height:10px;border-radius:50%;background:${bt.color};flex-shrink:0"></div>
+                <div style="flex:1;font-size:.85rem;font-weight:600;color:#e8d090">${bt.name}</div>
+                <div style="font-size:.72rem;color:#8a6820;flex-shrink:0">${sc} runa${sc!==1?'s':''}</div>
+                <div style="display:flex;width:128px;flex-shrink:0">
+                    <input type="number" min="0" data-key="${k}" class="r-blank-inp" value="${val}" style="border-radius:8px 0 0 8px;padding:8px 10px;font-size:.82em">
+                    <div style="background:rgba(10,6,0,.8);border:1px solid rgba(140,90,0,.3);border-left:none;border-radius:0 8px 8px 0;padding:8px 9px;font-size:.72rem;color:#8a6820;display:flex;align-items:center">gps</div>
+                </div>
+            </div>`;
+        }).join(''):`<div style="font-size:.75rem;color:#5a4010;font-family:'Cinzel Decorative',serif;padding:4px">Nenhum blank selecionado.</div>`;
+        list.querySelectorAll('.r-blank-inp').forEach(inp=>{inp.addEventListener('input',e=>{RS.blankPrices[e.target.dataset.key]=+e.target.value||0})});
+    }
+    window.rToggleBlank=function(bid){
+        if(RS.selBlanks.has(bid))RS.selBlanks.delete(bid);else RS.selBlanks.add(bid);
+        rRenderBlanks();
+    };
+
+    /* RUNE PRICES */
+    function rRenderRunePrices(){
+        const list=document.getElementById('r-runePriceList');if(!list)return;
+        const spells=rSpells(RS.voc);
+        if(!spells.length){list.innerHTML=`<div style="color:#5a4010;font-size:.78rem;font-family:'Cinzel Decorative',serif;padding:8px">Nenhuma runa para esta vocação.</div>`;return}
+        list.innerHTML=spells.map(sp=>{
+            const val=RS.runePrices[sp.id]??'';
+            const dotEl=sp.blank?`<div style="width:8px;height:8px;border-radius:50%;background:${rBlankColor(sp.blank)};flex-shrink:0"></div>`:`<div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15);flex-shrink:0"></div>`;
+            const dis=RS.isAdmin?'':'disabled';
+            const disStyle=RS.isAdmin?'':'opacity:.55;cursor:not-allowed';
+            return`<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:linear-gradient(180deg,rgba(14,9,2,.98),rgba(10,6,1,.96));border-radius:10px;border:1px solid rgba(130,85,0,.2);margin-bottom:6px">
+                ${dotEl}
+                <div style="flex:1;font-size:.85rem;font-weight:600;color:#e8d090">${sp.name}</div>
+                <div style="font-size:.72rem;color:#8a6820;flex-shrink:0">${sp.charges}× cargas</div>
+                <div style="display:flex;width:138px;flex-shrink:0">
+                    <input type="number" class="r-price-inp" data-id="${sp.id}" min="0" placeholder="" value="${val}" ${dis} style="border-radius:8px 0 0 8px;padding:8px 10px;font-size:.82em;${disStyle}">
+                    <div style="background:rgba(10,6,0,.8);border:1px solid rgba(140,90,0,.3);border-left:none;border-radius:0 8px 8px 0;padding:8px 9px;font-size:.72rem;color:#8a6820;display:flex;align-items:center">gps</div>
+                </div>
+            </div>`;
+        }).join('');
+        if(RS.isAdmin){
+            list.querySelectorAll('.r-price-inp').forEach(inp=>{
+                inp.addEventListener('input',e=>{
+                    const id=e.target.dataset.id,v=e.target.value;
+                    if(v==='')delete RS.runePrices[id];else RS.runePrices[id]=+v;
+                    rDebounceSave();
+                });
+            });
+        }
+    }
+
+    let _rSaveTimer=null;
+    function rDebounceSave(){
+        const dot=document.getElementById('r-fb-dot');
+        if(dot){dot.style.background='#FFD700';dot.title='Salvando...'}
+        clearTimeout(_rSaveTimer);
+        _rSaveTimer=setTimeout(()=>{
+            if(window._r_fbSet&&window._r_fbRef){
+                window._r_fbSet(window._r_fbRef,{prices:RS.runePrices}).then(()=>{
+                    if(dot){dot.style.background='#00fa9a';dot.title='Sincronizado'}
+                }).catch(()=>{
+                    if(dot){dot.style.background='#555';dot.title='Erro ao salvar'}
+                });
+            }
+        },800);
+    }
+
+    /* CALC */
+    window.rRunCalc=function(){
+        RS.spiritStart=document.getElementById('r-inpSpirit')?.value??'';
+        const t=Math.max(1,+document.getElementById('r-inpTime')?.value||60);
+        const minutes=document.getElementById('r-selUnit')?.value==='h'?t*60:t;
+        const list=rSpells(RS.voc);
+        const area=document.getElementById('r-results');
+        if(!list.length){area.innerHTML=rPlaceholder('Esta vocação não conjura runas.');return}
+        let rows=list.map(spell=>({spell,calc:rSimulate(spell,minutes)}));
+        rows.sort((a,b)=>b.calc.ph-a.calc.ph);
+        RS.results=rows;RS.tab='ranking';RS.safeResult=null;
+        rRenderResults();
+    };
+
+    function rRenderResults(){
+        const area=document.getElementById('r-results');if(!area)return;
+        const rows=RS.results;
+        const tabBar=`<div style="display:flex;gap:5px;width:100%;background:rgba(10,6,0,.8);border:1px solid rgba(160,100,10,.2);border-radius:12px;padding:5px;margin-bottom:18px">
+            ${['ranking','safezone'].map(t=>`<button onclick="rSetTab('${t}')" style="flex:1;padding:12px;text-align:center;border-radius:8px;font-size:.78rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;color:${RS.tab===t?'var(--primary)':'#6b5010'};border:${RS.tab===t?'1px solid rgba(255,215,0,.35)':'1px solid transparent'};background:${RS.tab===t?'rgba(255,215,0,.1)':'transparent'};font-family:'Cinzel Decorative',serif;text-transform:uppercase;box-shadow:${RS.tab===t?'0 0 15px rgba(255,215,0,.12)':'none'}">${t==='ranking'?'🏆 RANKING':'🛡 SAFEZONE'}</button>`).join('')}
+        </div>`;
+        area.innerHTML=tabBar+(RS.tab==='ranking'?rBuildRanking(rows):rBuildSafezone(rows));
+    }
+    window.rSetTab=function(t){RS.tab=t;rRenderResults()};
+
+    function rPlaceholder(msg){return`<div style="width:100%;padding:28px;text-align:center;color:#5a4010;border:1px dashed rgba(160,100,10,.3);border-radius:14px;font-family:'Cinzel Decorative',serif;font-size:.78rem;letter-spacing:.8px">${msg}</div>`}
+
+    function rBuildRanking(rows){
+        if(!rows||!rows.length)return rPlaceholder('Nenhum resultado.');
+        const top3=rows.slice(0,3);
+        const medals=['1°','2°','3°'];
+        const pCls=['p1','p2','p3'];
+        const pColors=['rgba(255,215,0,.08)','rgba(0,0,0,0)','rgba(0,0,0,0)'];
+        const pBorders=['rgba(255,215,0,.45)','rgba(185,199,206,.25)','rgba(193,139,90,.25)'];
+        const mColors=['var(--primary)','#bfc7ce','#c4855a'];
+        const mShadows=['0 0 20px rgba(255,215,0,.5)','none','none'];
+        const ord=[1,0,2];
+        const podium=`<div style="display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:10px;width:100%;margin-bottom:18px">
+            ${ord.map(i=>{
+                const r=top3[i];if(!r)return'<div></div>';const c=r.calc;
+                return`<div style="background:linear-gradient(145deg,rgba(18,12,4,.97),rgba(12,8,2,.95));border:1px solid ${pBorders[i]};background:${pColors[i]};border-radius:14px;padding:18px 12px;text-align:center">
+                    <div style="font-family:'Cinzel Decorative',serif;font-size:1.5rem;font-weight:900;color:${mColors[i]};text-shadow:${mShadows[i]};margin-bottom:4px">${medals[i]}</div>
+                    <div style="font-size:.78rem;font-weight:700;color:#e8d090;margin-bottom:10px;min-height:2.4em;display:flex;align-items:center;justify-content:center">${r.spell.name}</div>
+                    <div style="font-size:.65rem;color:#8a6820;text-transform:uppercase;letter-spacing:.8px;font-family:'Cinzel Decorative',serif;margin-bottom:2px">lucro / hora</div>
+                    <div style="font-size:1rem;font-weight:800;color:var(--primary);text-shadow:0 0 12px rgba(255,215,0,.3)">${rfmt(c.ph)} gps</div>
+                    <div style="margin-top:8px">
+                        <span style="display:inline-block;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:2px 8px;font-size:.65rem;color:#a07820;margin:2px">${rfmt(c.ch)} c/h</span>
+                        <span style="display:inline-block;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:2px 8px;font-size:.65rem;color:#a07820;margin:2px">SP→${c.spF}</span>
+                    </div>
+                </div>`;
+            }).join('')}
+        </div>`;
+
+        const list=rows.map((row,idx)=>{
+            const c=row.calc;
+            const nc=idx===0?'var(--primary)':idx===1?'#bfc7ce':idx===2?'#c4855a':'#5a4010';
+            const ncShadow=idx===0?'0 0 15px rgba(255,215,0,.4)':'none';
+            return`<div style="width:100%;background:linear-gradient(145deg,rgba(18,12,4,.97),rgba(12,8,2,.95));border:1px solid rgba(130,85,0,.2);border-radius:14px;padding:16px 20px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px">
+                <div style="font-family:'Cinzel Decorative',serif;font-size:1.4rem;font-weight:900;color:${nc};text-shadow:${ncShadow};width:32px;flex-shrink:0;text-align:center;margin-top:2px">${idx+1}</div>
+                <div style="flex:1;min-width:0">
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:10px;flex-wrap:wrap">
+                        <div>
+                            <div style="font-size:.92rem;font-weight:700;color:#e8d090">${row.spell.name}</div>
+                            <div style="font-size:.72rem;color:#8a6820;margin-top:2px">${row.spell.blank?rBlankName(row.spell.blank):'sem blank'} · ${row.spell.charges}× cargas/cast</div>
+                        </div>
+                        <div style="text-align:right">
+                            <div style="font-size:1rem;font-weight:800;color:var(--primary);text-shadow:0 0 10px rgba(255,215,0,.3);white-space:nowrap">${rfmt(c.ph)} gps/h</div>
+                            <div style="font-size:.72rem;color:#888;margin-top:2px">lucro: <span style="font-weight:700;color:${c.profit>=0?'var(--accent-green)':'var(--accent-red)'}">${rfmt(c.profit)} gps</span></div>
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+                        ${[['Casts',rfmt(c.casts)],['Cargas',rfmt(c.tc)],['Receita',rfmt(c.rev)],['Custo blanks',rfmt(c.bc)],['Custo itens',rfmt(c.ic)],['SP final',c.spF]].map(([k,v])=>`
+                        <div style="background:linear-gradient(180deg,rgba(14,9,2,.98),rgba(10,6,1,.96));border:1px solid rgba(130,85,0,.18);border-radius:8px;padding:8px 12px">
+                            <div style="font-size:.62rem;color:#6b5010;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px;font-family:'Cinzel Decorative',serif">${k}</div>
+                            <div style="font-size:.85rem;font-weight:700;color:#e8d090">${v}</div>
+                        </div>`).join('')}
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+        return podium+list;
+    }
+
+    function rBuildSafezone(rows){
+        const runeOpts=rows&&rows.length
+            ?`<option value="best">Melhor por lucro/h</option>`+rows.map(r=>`<option value="${r.spell.id}"${RS.safeRune===r.spell.id?' selected':''}>${r.spell.name}</option>`).join('')
+            :`<option value="best">Calcule o ranking primeiro</option>`;
+        const safeRes=RS.safeResult?rBuildSafeResult(RS.safeResult):'';
+        return`<div class="config-panel" style="flex-direction:column;margin-bottom:10px">
+            <div style="display:flex;gap:20px;flex-wrap:wrap;width:100%">
+                <div class="form-group">
+                    <label>Preço da Coin (market)</label>
+                    <div style="display:flex">
+                        <input type="number" id="r-inpCoin" min="0" placeholder="Ex.: 1000" value="${RS.coinPrice}" style="border-radius:12px 0 0 12px">
+                        <div style="background:rgba(10,6,0,.8);border:1px solid rgba(140,90,0,.3);border-left:none;border-radius:0 12px 12px 0;padding:15px 10px;font-size:.75rem;color:#8a6820;display:flex;align-items:center;white-space:nowrap">gps</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Plano de Safezone</label>
+                    <select class="ph-select" id="r-selTier">
+                        ${R_SAFEZONE_TIERS.map(t=>`<option value="${t.points}"${t.points===+RS.safeTier?' selected':''}>${t.label}</option>`).join('')}
+                    </select>
+                    <div style="font-size:.65rem;color:#6b5010;margin-top:4px;font-family:'Cinzel Decorative',serif">(pts × market) ÷ 10</div>
+                </div>
+                <div class="form-group">
+                    <label>Runa para simular</label>
+                    <select class="ph-select" id="r-selSafeRune">${runeOpts}</select>
+                </div>
+            </div>
+            <button onclick="rCalcSafe()" style="background:linear-gradient(135deg,var(--primary),#c8780a);color:#000;font-family:'Cinzel Decorative',serif;font-size:.9rem;font-weight:900;border:none;border-radius:12px;padding:15px 30px;cursor:pointer;letter-spacing:1.5px;text-transform:uppercase;margin-top:10px;align-self:center;box-shadow:0 6px 20px rgba(255,215,0,.2)">
+                <i class="fa-solid fa-shield" style="margin-right:8px"></i> CALCULAR SAFEZONE
+            </button>
+            ${safeRes}
+        </div>`;
+    }
+
+    window.rCalcSafe=function(){
+        const coinPrice=+document.getElementById('r-inpCoin')?.value||0;
+        RS.coinPrice=String(coinPrice);
+        RS.safeTier=+document.getElementById('r-selTier')?.value||900;
+        RS.safeRune=document.getElementById('r-selSafeRune')?.value||'best';
+        if(!coinPrice||!RS.results||!RS.results.length)return;
+        const rows=RS.results;
+        const row=RS.safeRune==='best'?rows[0]:(rows.find(r=>r.spell.id===RS.safeRune)||rows[0]);
+        const tier=R_SAFEZONE_TIERS.find(t=>t.points===RS.safeTier)||R_SAFEZONE_TIERS[0];
+        const cost=tier.points*coinPrice/10;
+        const ph=row.calc.ph,ch=row.calc.ch;
+        const htp=ph>0?cost/ph:Infinity;
+        RS.safeResult={
+            runeName:row.spell.name,cost,ph,ch,coinPrice,
+            htp,totalProfit:ph*tier.hours,totalCharges:ch*tier.hours,
+            profitAfterPay:ph*tier.hours-cost,remaining:Math.max(0,tier.hours-htp),
+            planLabel:tier.label,points:tier.points,durationH:tier.hours
+        };
+        rRenderResults();
+    };
+
+    function rBuildSafeResult(r){
+        const kv=(k,v,col)=>`<div style="background:linear-gradient(180deg,rgba(14,9,2,.98),rgba(10,6,1,.96));border:1px solid rgba(130,85,0,.18);border-radius:8px;padding:10px 14px">
+            <div style="font-size:.62rem;color:#6b5010;text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px;font-family:'Cinzel Decorative',serif">${k}</div>
+            <div style="font-size:.9rem;font-weight:700;color:${col||'#e8d090'}">${v}</div>
+        </div>`;
+        return`<div style="width:100%;background:linear-gradient(145deg,rgba(18,12,4,.97),rgba(12,8,2,.95));border:1px solid rgba(255,215,0,.3);border-radius:14px;padding:20px 24px;margin-top:16px">
+            <div style="font-family:'Cinzel Decorative',serif;font-size:.82rem;color:var(--primary);margin-bottom:10px;letter-spacing:1px;text-transform:uppercase"><i class="fa-solid fa-shield-halved" style="margin-right:8px"></i>${r.planLabel}</div>
+            <div style="font-size:.72rem;color:#8a6820;margin-bottom:14px;font-family:'Cinzel Decorative',serif">
+                Custo: ${r.points} pts × ${rfmt(r.coinPrice)} ÷ 10 = <span style="color:var(--primary);font-weight:700"> ${rfmt(r.cost)} gps</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+                ${kv('Runa',r.runeName)}
+                ${kv('Lucro/hora',rfmt(r.ph)+' gps/h')}
+                ${kv('Tempo p/ pagar safezone',rhhmm(r.htp))}
+                ${kv('Duração do plano',r.durationH+'h')}
+                ${kv('Lucro total (plano)',rfmt(r.totalProfit)+' gps')}
+                ${kv('Cargas totais',rfmt(r.totalCharges))}
+                ${kv('Lucro após pagar',rfmt(r.profitAfterPay)+' gps',r.profitAfterPay>=0?'var(--accent-green)':'var(--accent-red)')}
+                ${kv('Horas restantes',rhhmm(r.remaining))}
+            </div>
+        </div>`;
+    }
+
+    /* FIREBASE — aguarda o módulo principal registrar o db */
+    function rConnectFirebase(){
+        const tryConnect=()=>{
+            if(!window._r_fbOnValue||!window._r_fbRef)return;
+            const dot=document.getElementById('r-fb-dot');
+
+            window._r_fbOnValue(window._r_fbRef,(snap)=>{
+                const dados=snap.val();
+                if(dados&&dados.prices){
+                    Object.keys(dados.prices).forEach(id=>{
+                        if(document.activeElement&&document.activeElement.dataset&&document.activeElement.dataset.id===id&&RS.isAdmin)return;
+                        const v=dados.prices[id];
+                        if(v===null||v===undefined||v===''){delete RS.runePrices[id];return;}
+                        RS.runePrices[id]=+v;
+                    });
+                    rRenderRunePrices();
+                }
+                if(dot){dot.style.background='#00fa9a';dot.title='Sincronizado'}
+            },(err)=>{
+                if(dot){dot.style.background='#555';dot.title='Erro'}
+                console.warn('Firebase runas:',err);
+            });
+        };
+        if(window._r_fbOnValue&&window._r_fbRef){tryConnect();}
+        else{
+            let attempts=0;
+            const wait=setInterval(()=>{
+                attempts++;
+                if(window._r_fbOnValue&&window._r_fbRef){clearInterval(wait);tryConnect();}
+                if(attempts>30)clearInterval(wait);
+            },300);
+        }
+    }
+
+    /* AUTH WATCH — pega do módulo principal via evento */
+    document.addEventListener('runas-auth-changed',(e)=>{
+        RS.isAdmin=e.detail.isAdmin;
+        rRenderRunePrices();
+    });
+
+    /* INIT */
+    function rInit(){
+        rInitVoc();
+        rRenderItems();
+        rRenderBlanks();
+        rRenderRunePrices();
+        rConnectFirebase();
+    }
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',rInit);
+    else rInit();
+
+    })(); // IIFE fim
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
@@ -1180,6 +1758,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const dbRef = ref(db, 'economiaExordion');
+
+        // Expõe para o módulo de runas (script separado)
+        const calcRunasRef = ref(db, 'calcRunas');
+        window._r_fbRef = calcRunasRef;
+        window._r_fbSet = set;
+        window._r_fbOnValue = onValue;
         
         const auth = getAuth(app);
         let isPiraqueAdmin = false;
@@ -1666,6 +2250,9 @@
         onAuthStateChanged(auth, (user) => {
             conectarFirebaseMercado();
             
+            // Notifica o módulo de runas sobre o estado de auth
+            document.dispatchEvent(new CustomEvent('runas-auth-changed', { detail: { isAdmin: !!user } }));
+
             if (user) {
                 isPiraqueAdmin = true;
                 const nomeVisor = user.displayName || user.email.split('@')[0];
