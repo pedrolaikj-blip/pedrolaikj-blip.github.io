@@ -565,6 +565,11 @@
             display: block;
             filter: brightness(0.65) grayscale(0.3);
             transition: filter 0.3s, transform 0.3s;
+        }
+        #nav-runas img {
+            height: auto;
+            width: 280px;
+            object-fit: contain;
         }        .nav-img-btn:hover img {
             filter: brightness(1.1) drop-shadow(0 0 10px rgba(255,215,0,0.5));
             transform: translateY(-3px) scale(1.04);
@@ -740,7 +745,7 @@
             <img src="https://i.ibb.co/Mk1H4nDT/encanttos.png" alt="Encantos">
         </button>
         <button class="nav-img-btn" id="nav-runas" onclick="switchApp('runas')" title="Calculadora de Runas">
-            <img src="https://i.ibb.co/zhLXDHVw/RUNAS.png" alt="Calculadora de Runas" style="height: auto; width: 220px;">
+            <img src="https://i.ibb.co/zhLXDHVw/RUNAS.png" alt="Calculadora de Runas">
         </button>
     </div>
 
