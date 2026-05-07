@@ -932,9 +932,10 @@
         .dg-toggle-btn.active { background: rgba(0,250,154,0.1); color: var(--accent-green); border-color: rgba(0,250,154,0.3); box-shadow: 0 0 12px rgba(0,250,154,0.15); }
         .dg-coin-ref-box { background: rgba(255,215,0,0.04); border: 1px solid rgba(255,215,0,0.15); border-radius: 10px; padding: 10px 16px; font-size: 0.8rem; color: #c8900a; font-family: 'Cinzel Decorative', serif; letter-spacing: 1px; margin-bottom: 16px; }
         .dg-info-box { background: rgba(0,80,200,0.05); border: 1px solid rgba(100,150,255,0.15); border-left: 3px solid rgba(100,150,255,0.4); border-radius: 10px; padding: 14px 18px; color: #9ab0e0; font-size: 0.82rem; line-height: 1.6; margin-bottom: 20px; }
-        .dg-frag-share-box { background: rgba(0,250,154,0.04); border: 1px solid rgba(0,250,154,0.12); border-radius: 10px; padding: 8px 10px; min-width: 145px; text-align: right; }
+        .dg-frag-share-box { background: rgba(0,250,154,0.04); border: 1px solid rgba(0,250,154,0.12); border-radius: 10px; padding: 8px 10px; min-width: 175px; text-align: right; }
         .dg-frag-share-box .share-label { display:block; font-size:.62rem; color:#8a6820; font-family:'Cinzel Decorative',serif; letter-spacing:1px; text-transform:uppercase; margin-bottom:5px; }
-        .dg-frag-share-box .share-value { color: var(--accent-green); font-weight:900; font-size:.92rem; }
+        .dg-frag-share-box .share-frag-qtd { color:#c084fc; font-weight:900; font-size:1.02rem; line-height:1.1; }
+        .dg-frag-share-box .share-value { color: var(--accent-green); font-weight:900; font-size:.88rem; display:block; margin-top:4px; }
         @media (max-width: 700px) { .dg-player-row { flex-direction: column; align-items: flex-start; } .dg-frag-share-box { width:100%; text-align:left; } }
     </style>
 
@@ -1023,7 +1024,7 @@
             <div class="dg-info-box" style="width:100%; box-sizing:border-box;">
                 <i class="fa-solid fa-circle-info" style="color:#6a90e0; margin-right:6px;"></i>
                 <strong style="color:#aac4ff;">DG Hunt</strong> — calculadora de dungeon com divisão estilo Party Hunt.
-                Some o <strong style="color:var(--primary);">Gold dropado/vendido</strong>, desconte a <strong style="color:#ff9f9f;">Waste</strong> de cada player e some os <strong style="color:#c084fc;">Fragmentos Special em Gold</strong>.
+                Some o <strong style="color:var(--primary);">Gold dropado/vendido</strong>, desconte a <strong style="color:#ff9f9f;">Waste</strong> de cada player e some os <strong style="color:#c084fc;">Fragmentos normais + Special em Gold</strong>.
                 A entrada fica individual do lado de cada jogador: <strong style="color:#fff;">1 Coin = 10 Pontos</strong>, então a entrada em pontos vira Gold pela cotação de 1 Coin.
                 <br><span style="color:#6a80c0; font-size:0.75rem;">Os fragmentos não usam coin/pontos: eles sincronizam com o valor de fragmento Gold das Orbs no Mercado Main.</span>
             </div>
@@ -1062,10 +1063,10 @@
 
                     <!-- LOOT: FRAGMENTOS ESPECIAIS -->
                     <div class="dg-result-card">
-                        <div class="dg-section-title"><i class="fa-solid fa-gem" style="color:#c084fc;"></i> Fragmentos Special (Loot da DG)</div>
-                        <div style="color:#888; font-size:0.82rem; margin-bottom:14px;">Coloque a quantidade dropada. O valor unitário em Gold sincroniza automaticamente com o valor do fragmento da Orb no Mercado Main.</div>
+                        <div class="dg-section-title"><i class="fa-solid fa-gem" style="color:#c084fc;"></i> Fragmentos da DG</div>
+                        <div style="color:#888; font-size:0.82rem; margin-bottom:14px;">Coloque a quantidade dropada. O valor unitário em Gold sincroniza automaticamente com o valor do fragmento de cada Orb no Mercado Main.</div>
                         <div id="dg-frags-container"></div>
-                        <div style="margin-top:10px;color:#777;font-size:.75rem;line-height:1.5;"><i class="fa-solid fa-lock" style="color:#a855f7;margin-right:4px;"></i> Lista fixa com os Special Fragments. O valor unitário vem sincronizado do mercado; alterou o valor da Orb lá em cima, atualiza aqui também.</div>
+                        <div style="margin-top:10px;color:#777;font-size:.75rem;line-height:1.5;"><i class="fa-solid fa-lock" style="color:#a855f7;margin-right:4px;"></i> Lista fixa com todos os fragments das Orbs: normal e Special. O valor unitário vem sincronizado do mercado; alterou o valor da Orb lá em cima, atualiza aqui também.</div>
                     </div>
                 </div>
 
@@ -1887,10 +1888,16 @@
                 { name: 'Jogador 4', active: true, isBanker: false, entryPoints: 50, wasteGold: 0 }
             ],
             frags: [
-                { id: 'scleaner', name: 'Special Cleaner Fragment', qtd: 0, valueGold: 0 },
-                { id: 'supgrade', name: 'Special Upgrade Fragment', qtd: 0, valueGold: 0 },
-                { id: 'sfate', name: 'Special Fate Fragment', qtd: 0, valueGold: 0 },
-                { id: 'sancient', name: 'Special Ancient Fragment', qtd: 0, valueGold: 0 }
+                { id: 'cleaner', name: 'Cleaner Fragment', qtd: 0, valueGold: 0, tipo: 'Normal' },
+                { id: 'scleaner', name: 'Special Cleaner Fragment', qtd: 0, valueGold: 0, tipo: 'Special' },
+                { id: 'upgrade', name: 'Upgrade Fragment', qtd: 0, valueGold: 0, tipo: 'Normal' },
+                { id: 'supgrade', name: 'Special Upgrade Fragment', qtd: 0, valueGold: 0, tipo: 'Special' },
+                { id: 'fate', name: 'Fate Fragment', qtd: 0, valueGold: 0, tipo: 'Normal' },
+                { id: 'sfate', name: 'Special Fate Fragment', qtd: 0, valueGold: 0, tipo: 'Special' },
+                { id: 'ancient', name: 'Ancient Fragment', qtd: 0, valueGold: 0, tipo: 'Normal' },
+                { id: 'sancient', name: 'Special Ancient Fragment', qtd: 0, valueGold: 0, tipo: 'Special' },
+                { id: 'enchant', name: 'Enchant Fragment', qtd: 0, valueGold: 0, tipo: 'Normal' },
+                { id: 'shuffle', name: 'Shuffle Fragment', qtd: 0, valueGold: 0, tipo: 'Normal' }
             ]
         };
 
@@ -2007,7 +2014,7 @@
                 return `
                 <div class="dg-player-row" style="align-items:center;">
                     <div style="display:flex;flex-direction:column;gap:6px;min-width:210px;flex:1;">
-                        <span style="font-size:.68rem;color:#8a6820;font-family:'Cinzel Decorative',serif;letter-spacing:1px;text-transform:uppercase;">Special Fragment</span>
+                        <span style="font-size:.68rem;color:#8a6820;font-family:'Cinzel Decorative',serif;letter-spacing:1px;text-transform:uppercase;">${f.tipo || 'Fragment'} Fragment</span>
                         <div style="color:#fff;font-weight:900;font-size:.95rem;"><i class="fa-solid fa-gem" style="color:#c084fc;margin-right:6px;"></i>${f.name}</div>
                     </div>
                     <div style="display:flex;flex-direction:column;gap:6px;">
@@ -2022,10 +2029,10 @@
                         <span style="font-size:.68rem;color:#8a6820;font-family:'Cinzel Decorative',serif;letter-spacing:1px;text-transform:uppercase;">Subtotal Gold</span>
                         <div id="dg_frag_subtotal_${f.id}" style="color:#c084fc;font-weight:800;">${dgFmt(subtotal)}</div>
                     </div>
-                    <div class="dg-frag-share-box" title="Quanto desse fragmento fica para cada jogador ativo">
-                        <span class="share-label">Cada jogador</span>
-                        <span class="share-value" id="dg_frag_share_${f.id}">${dgFmt(shareEach)}</span>
-                        <div id="dg_frag_qtd_share_${f.id}" style="font-size:.72rem;color:#c084fc;margin-top:4px;font-weight:800;">${qtdEach} frag / jogador</div>
+                    <div class="dg-frag-share-box" title="Quantidade e valor desse fragmento para cada jogador ativo">
+                        <span class="share-label">Cada jogador recebe</span>
+                        <div class="share-frag-qtd" id="dg_frag_qtd_share_${f.id}">${qtdEach} frag</div>
+                        <span class="share-value" id="dg_frag_share_${f.id}">= ${dgFmt(shareEach)}</span>
                         <div id="dg_frag_share_info_${f.id}" style="font-size:.62rem;color:#777;margin-top:3px;">${activeCount} players${qtdSobra ? ` • sobra ${qtdSobra} frag` : ''}${sobra ? ` • sobra ${dgFmt(sobra)}` : ''}</div>
                     </div>
                 </div>`;
@@ -2062,20 +2069,19 @@
                 const infoEl = document.getElementById(`dg_frag_share_info_${f.id}`);
                 if (valueInput) valueInput.value = f.valueGold || '';
                 if (subEl) subEl.innerText = dgFmt(subtotal);
-                if (shareEl) shareEl.innerText = dgFmt(shareEach);
-                if (qtdShareEl) qtdShareEl.innerText = `${qtdEach} frag / jogador`;
+                if (shareEl) shareEl.innerText = `= ${dgFmt(shareEach)}`;
+                if (qtdShareEl) qtdShareEl.innerText = `${qtdEach} frag`;
                 if (infoEl) infoEl.innerText = `${n} players${qtdSobra ? ` • sobra ${qtdSobra} frag` : ''}${sobra ? ` • sobra ${dgFmt(sobra)}` : ''}`;
             });
             const fragGold = dgState.frags.reduce((sum, f) => sum + ((f.qtd || 0) * (f.valueGold || 0)), 0);
             const fragShareRows = dgState.frags
-                .filter(f => (f.qtd || 0) > 0)
                 .map(f => {
                     const subtotal = (f.qtd || 0) * (f.valueGold || 0);
                     const qtdEach = Math.floor((f.qtd || 0) / n);
                     const qtdSobra = (f.qtd || 0) - (qtdEach * n);
                     const shareEach = Math.floor(subtotal / n);
                     const sobra = subtotal - (shareEach * n);
-                    return `<div class="dg-summary-row"><span>${f.name} — ${f.qtd}x</span><strong style="color:#c084fc;">${qtdEach} frag + ${dgFmt(shareEach)} / jogador${qtdSobra ? ` <small style="color:#777;">(+ sobra ${qtdSobra} frag)</small>` : ''}${sobra ? ` <small style="color:#777;">(+ sobra ${dgFmt(sobra)})</small>` : ''}</strong></div>`;
+                    return `<div class="dg-summary-row"><span>${f.name} — ${f.qtd || 0}x</span><strong style="color:#c084fc;">cada jogador: ${qtdEach} frag = ${dgFmt(shareEach)}${qtdSobra ? ` <small style="color:#777;">(+ sobra ${qtdSobra} frag)</small>` : ''}${sobra ? ` <small style="color:#777;">(+ sobra ${dgFmt(sobra)})</small>` : ''}</strong></div>`;
                 }).join('');
             const totalLootGold = dgState.goldLoot + fragGold;
             const balanceAfterWaste = totalLootGold - wasteGoldTotal;
@@ -2085,8 +2091,8 @@
             if (summary) {
                 summary.innerHTML = `
                     <div class="dg-summary-row"><span>Gold direto</span><strong class="currency-gold">${dgFmt(dgState.goldLoot)}</strong></div>
-                    <div class="dg-summary-row"><span>Fragmentos Special (sincronizado em Gold)</span><strong style="color:#c084fc;">${dgFmt(fragGold)}</strong></div>
-                    ${fragShareRows || '<div class="dg-summary-row"><span>Divisão dos fragmentos</span><strong style="color:#777;">Informe a quantidade dropada</strong></div>'}
+                    <div class="dg-summary-row"><span>Fragmentos da DG (normal + special em Gold)</span><strong style="color:#c084fc;">${dgFmt(fragGold)}</strong></div>
+                    ${fragShareRows}
                     <div class="dg-summary-row highlight"><span>Total do loot em Gold</span><strong class="currency-gold" style="font-size:1.15rem;">${dgFmt(totalLootGold)}</strong></div>
                     <div class="dg-summary-row"><span>Waste total</span><strong style="color:#ff7070;">${dgFmt(wasteGoldTotal)}</strong></div>
                     <div class="dg-summary-row"><span>Loot depois da Waste</span><strong style="color:${balanceAfterWaste >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};">${balanceAfterWaste < 0 ? '-' : ''}${dgFmt(balanceAfterWaste)}</strong></div>
@@ -2115,7 +2121,7 @@
                         .map(f => {
                             const qtdEach = Math.floor((f.qtd || 0) / n);
                             const shareEach = Math.floor(((f.qtd || 0) * (f.valueGold || 0)) / n);
-                            return `<div style="font-size:.72rem;color:#c084fc;margin-top:2px;">${f.name}: ${qtdEach} frag ≈ ${dgFmt(shareEach)}</div>`;
+                            return `<div style="font-size:.72rem;color:#c084fc;margin-top:2px;">${f.name}: recebe ${qtdEach} frag = ${dgFmt(shareEach)}</div>`;
                         }).join('');
                     return `
                         <div class="dg-per-player-card ${netShare < 0 ? 'is-negative' : ''}">
