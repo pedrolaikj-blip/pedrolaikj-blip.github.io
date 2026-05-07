@@ -1025,7 +1025,7 @@
                 <i class="fa-solid fa-circle-info" style="color:#6a90e0; margin-right:6px;"></i>
                 <strong style="color:#aac4ff;">DG Hunt</strong> — calculadora de dungeon com divisão estilo Party Hunt.
                 Some o <strong style="color:var(--primary);">Gold dropado/vendido</strong>, desconte a <strong style="color:#ff9f9f;">Waste</strong> de cada player e some os <strong style="color:#c084fc;">Fragmentos normais + Special em Gold</strong>.
-                A entrada fica individual do lado de cada jogador: <strong style="color:#fff;">1 Coin = 10 Pontos</strong>, então a entrada em pontos vira Gold pela cotação de 1 Coin.
+                A entrada fica individual do lado de cada jogador: <strong style="color:#fff;">1 Coin = 10 Pontos</strong>, então a entrada em pontos vira Gold pela cotação de 1 Coin. Também dá para colocar a <strong style="color:#ffb347;">taxa aleatória em Gold</strong> cobrada em cada entrada.
                 <br><span style="color:#6a80c0; font-size:0.75rem;">Os fragmentos não usam coin/pontos: eles sincronizam com o valor de fragmento Gold das Orbs no Mercado Main.</span>
             </div>
 
@@ -1882,10 +1882,10 @@
         const dgState = {
             goldLoot: 0,
             players: [
-                { name: 'Jogador 1', active: true, isBanker: true, entryPoints: 50, wasteGold: 0 },
-                { name: 'Jogador 2', active: true, isBanker: false, entryPoints: 50, wasteGold: 0 },
-                { name: 'Jogador 3', active: true, isBanker: false, entryPoints: 50, wasteGold: 0 },
-                { name: 'Jogador 4', active: true, isBanker: false, entryPoints: 50, wasteGold: 0 }
+                { name: 'Jogador 1', active: true, isBanker: true, entryPoints: 50, entryTaxGold: 0, wasteGold: 0 },
+                { name: 'Jogador 2', active: true, isBanker: false, entryPoints: 50, entryTaxGold: 0, wasteGold: 0 },
+                { name: 'Jogador 3', active: true, isBanker: false, entryPoints: 50, entryTaxGold: 0, wasteGold: 0 },
+                { name: 'Jogador 4', active: true, isBanker: false, entryPoints: 50, entryTaxGold: 0, wasteGold: 0 }
             ],
             frags: [
                 { id: 'cleaner', name: 'Cleaner Fragment', qtd: 0, valueGold: 0, tipo: 'Normal' },
@@ -1927,7 +1927,7 @@
 
         window.dgSetGoldLoot = function(value) { dgState.goldLoot = dgNum(value); window.dgCalculate(); };
                 window.dgAddPlayer = function() {
-            dgState.players.push({ name: `Jogador ${dgState.players.length + 1}`, active: true, isBanker: false, entryPoints: 50, wasteGold: 0 });
+            dgState.players.push({ name: `Jogador ${dgState.players.length + 1}`, active: true, isBanker: false, entryPoints: 50, entryTaxGold: 0, wasteGold: 0 });
             window.dgRenderPlayers();
         };
 
@@ -1966,6 +1966,11 @@
             window.dgCalculate();
         };
 
+        window.dgUpdatePlayerEntryTax = function(idx, value) {
+            dgState.players[idx].entryTaxGold = dgNum(value);
+            window.dgCalculate();
+        };
+
         window.dgUpdatePlayerWaste = function(idx, value) {
             dgState.players[idx].wasteGold = dgNum(value);
             window.dgCalculate();
@@ -1988,6 +1993,10 @@
                     <div style="display:flex;flex-direction:column;gap:5px;min-width:110px;">
                         <span style="font-size:.62rem;color:#8a6820;font-family:'Cinzel Decorative',serif;letter-spacing:1px;text-transform:uppercase;">Entrada pts</span>
                         <input class="dg-frag-inp" type="number" value="${p.entryPoints ?? 0}" oninput="dgUpdatePlayerEntry(${idx}, this.value)" ${!p.active ? 'disabled' : ''} placeholder="0">
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:5px;min-width:110px;">
+                        <span style="font-size:.62rem;color:#8a6820;font-family:'Cinzel Decorative',serif;letter-spacing:1px;text-transform:uppercase;">Taxa entrada Gold</span>
+                        <input class="dg-frag-inp" type="number" value="${p.entryTaxGold ?? 0}" oninput="dgUpdatePlayerEntryTax(${idx}, this.value)" ${!p.active ? 'disabled' : ''} placeholder="0" style="color:#ffb347 !important;">
                     </div>
                     <div style="display:flex;flex-direction:column;gap:5px;min-width:110px;">
                         <span style="font-size:.62rem;color:#8a6820;font-family:'Cinzel Decorative',serif;letter-spacing:1px;text-transform:uppercase;">Waste Gold</span>
@@ -2052,7 +2061,9 @@
             const n = activePlayers.length || 1;
             const entryCostGoldByIdx = {};
             activePlayers.forEach(p => {
-                entryCostGoldByIdx[p.idx] = Math.floor(((p.entryPoints || 0) / 10) * coinGold);
+                const entradaPontosGold = Math.floor(((p.entryPoints || 0) / 10) * coinGold);
+                const taxaGold = p.entryTaxGold || 0;
+                entryCostGoldByIdx[p.idx] = entradaPontosGold + taxaGold;
             });
             const entryCostGoldTotal = activePlayers.reduce((sum, p) => sum + (entryCostGoldByIdx[p.idx] || 0), 0);
             const wasteGoldTotal = activePlayers.reduce((sum, p) => sum + (p.wasteGold || 0), 0);
@@ -2097,7 +2108,7 @@
                     <div class="dg-summary-row"><span>Waste total</span><strong style="color:#ff7070;">${dgFmt(wasteGoldTotal)}</strong></div>
                     <div class="dg-summary-row"><span>Loot depois da Waste</span><strong style="color:${balanceAfterWaste >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};">${balanceAfterWaste < 0 ? '-' : ''}${dgFmt(balanceAfterWaste)}</strong></div>
                     <div class="dg-summary-row"><span>Jogadores ativos</span><strong>${activePlayers.length}</strong></div>
-                    <div class="dg-summary-row"><span>Custo entrada total dos jogadores</span><strong style="color:#ffb347;">${dgFmt(entryCostGoldTotal)}</strong></div>
+                    <div class="dg-summary-row"><span>Entrada total dos jogadores</span><strong style="color:#ffb347;">${dgFmt(entryCostGoldTotal)}</strong></div>
                     <div class="dg-summary-row highlight"><span>Parte após waste por jogador</span><strong style="color:var(--accent-green);font-size:1.15rem;">${grossShare < 0 ? '-' : ''}${dgFmt(grossShare)}</strong></div>
                 `;
             }
@@ -2111,6 +2122,8 @@
                 const banker = activePlayers.find(p => p.isBanker) || activePlayers[0];
                 per.innerHTML = activePlayers.map(p => {
                     const isBanker = p.idx === banker.idx;
+                    const entradaPontosGold = Math.floor(((p.entryPoints || 0) / 10) * coinGold);
+                    const taxaEntradaGold = p.entryTaxGold || 0;
                     const entryCost = entryCostGoldByIdx[p.idx] || 0;
                     const waste = p.wasteGold || 0;
                     const netShare = grossShare - entryCost;
@@ -2127,7 +2140,9 @@
                         <div class="dg-per-player-card ${netShare < 0 ? 'is-negative' : ''}">
                             <div>
                                 <div style="color:#fff;font-weight:800;">${p.name} ${isBanker ? '<span class="dg-badge"><i class="fa-solid fa-crown"></i> Banker</span>' : ''}</div>
-                                <div style="font-size:.75rem;color:#888;margin-top:4px;">Entrada individual: ${p.entryPoints || 0} pontos ≈ ${dgFmt(entryCost)}</div>
+                                <div style="font-size:.75rem;color:#888;margin-top:4px;">Entrada pontos: ${p.entryPoints || 0} pts ≈ ${dgFmt(entradaPontosGold)}</div>
+                                <div style="font-size:.75rem;color:#ffb347;margin-top:3px;">Taxa entrada Gold: ${dgFmt(taxaEntradaGold)}</div>
+                                <div style="font-size:.75rem;color:#d8b26a;margin-top:3px;">Entrada total: ${dgFmt(entryCost)}</div>
                                 <div style="font-size:.75rem;color:#ff9f9f;margin-top:3px;">Waste: ${dgFmt(waste)}</div>
                                 ${playerFragLines ? `<div style="margin-top:8px;border-top:1px solid rgba(192,132,252,.14);padding-top:6px;"><div style="font-size:.62rem;color:#888;text-transform:uppercase;font-weight:800;letter-spacing:1px;margin-bottom:3px;">Fragmentos por jogador</div>${playerFragLines}</div>` : ''}
                             </div>
