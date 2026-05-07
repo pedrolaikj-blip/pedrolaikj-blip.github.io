@@ -2086,30 +2086,49 @@
             });
             const fragGold = dgState.frags.reduce((sum, f) => sum + ((f.qtd || 0) * (f.valueGold || 0)), 0);
             const fragShareRows = dgState.frags
+                .filter(f => (f.qtd || 0) > 0)
                 .map(f => {
                     const subtotal = (f.qtd || 0) * (f.valueGold || 0);
                     const qtdEach = Math.floor((f.qtd || 0) / n);
                     const qtdSobra = (f.qtd || 0) - (qtdEach * n);
                     const shareEach = Math.floor(subtotal / n);
                     const sobra = subtotal - (shareEach * n);
-                    return `<div class="dg-summary-row"><span>${f.name} — ${f.qtd || 0}x</span><strong style="color:#c084fc;">cada jogador: ${qtdEach} frag = ${dgFmt(shareEach)}${qtdSobra ? ` <small style="color:#777;">(+ sobra ${qtdSobra} frag)</small>` : ''}${sobra ? ` <small style="color:#777;">(+ sobra ${dgFmt(sobra)})</small>` : ''}</strong></div>`;
+                    return `<div class="dg-summary-row" style="align-items:flex-start;gap:10px;">
+                        <span style="display:flex;flex-direction:column;gap:2px;">
+                            <strong style="color:#e8d090;">${f.name}</strong>
+                            <small style="color:#777;">Total: ${f.qtd || 0} frag × ${dgFmt(f.valueGold || 0)} = ${dgFmt(subtotal)}</small>
+                        </span>
+                        <strong style="color:#c084fc;text-align:right;">
+                            ${qtdEach} frag / jogador<br>
+                            <small style="color:#00fa9a;">≈ ${dgFmt(shareEach)} por jogador</small>
+                            ${qtdSobra ? `<br><small style="color:#777;">sobra ${qtdSobra} frag</small>` : ''}
+                            ${sobra ? `<br><small style="color:#777;">sobra ${dgFmt(sobra)}</small>` : ''}
+                        </strong>
+                    </div>`;
                 }).join('');
-            const totalLootGold = dgState.goldLoot + fragGold;
-            const balanceAfterWaste = totalLootGold - wasteGoldTotal;
-            const grossShare = Math.floor(balanceAfterWaste / n);
+
+            // GOLD segue a mesma mecânica da Party Hunt:
+            // loot em gold - custos individuais (entrada + taxa + waste) = lucro/prejuízo;
+            // depois divide igual entre os jogadores ativos. Fragmentos ficam separados.
+            const directGoldLoot = dgState.goldLoot;
+            const playerCostTotal = entryCostGoldTotal + wasteGoldTotal;
+            const balanceAfterCosts = directGoldLoot - playerCostTotal;
+            const goldShare = Math.floor(balanceAfterCosts / n);
 
             const summary = document.getElementById('dg-summary-box');
             if (summary) {
                 summary.innerHTML = `
-                    <div class="dg-summary-row"><span>Gold direto</span><strong class="currency-gold">${dgFmt(dgState.goldLoot)}</strong></div>
-                    <div class="dg-summary-row"><span>Fragmentos da DG (normal + special em Gold)</span><strong style="color:#c084fc;">${dgFmt(fragGold)}</strong></div>
-                    ${fragShareRows}
-                    <div class="dg-summary-row highlight"><span>Total do loot em Gold</span><strong class="currency-gold" style="font-size:1.15rem;">${dgFmt(totalLootGold)}</strong></div>
+                    <div class="dg-summary-row highlight"><span>Gold direto da DG</span><strong class="currency-gold" style="font-size:1.15rem;">${dgFmt(directGoldLoot)}</strong></div>
                     <div class="dg-summary-row"><span>Waste total</span><strong style="color:#ff7070;">${dgFmt(wasteGoldTotal)}</strong></div>
-                    <div class="dg-summary-row"><span>Loot depois da Waste</span><strong style="color:${balanceAfterWaste >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};">${balanceAfterWaste < 0 ? '-' : ''}${dgFmt(balanceAfterWaste)}</strong></div>
+                    <div class="dg-summary-row"><span>Entrada + taxa total</span><strong style="color:#ffb347;">${dgFmt(entryCostGoldTotal)}</strong></div>
+                    <div class="dg-summary-row"><span>Gold depois de waste/entrada</span><strong style="color:${balanceAfterCosts >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};">${balanceAfterCosts < 0 ? '-' : ''}${dgFmt(balanceAfterCosts)}</strong></div>
                     <div class="dg-summary-row"><span>Jogadores ativos</span><strong>${activePlayers.length}</strong></div>
-                    <div class="dg-summary-row"><span>Entrada total dos jogadores</span><strong style="color:#ffb347;">${dgFmt(entryCostGoldTotal)}</strong></div>
-                    <div class="dg-summary-row highlight"><span>Parte após waste por jogador</span><strong style="color:var(--accent-green);font-size:1.15rem;">${grossShare < 0 ? '-' : ''}${dgFmt(grossShare)}</strong></div>
+                    <div class="dg-summary-row highlight"><span>Parte de Gold por jogador</span><strong style="color:${goldShare >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};font-size:1.15rem;">${goldShare < 0 ? '-' : ''}${dgFmt(goldShare)}</strong></div>
+                    <div style="margin:12px 0 8px;border-top:1px solid rgba(192,132,252,.18);padding-top:12px;color:#c084fc;font-family:'Cinzel Decorative',serif;font-size:.72rem;letter-spacing:1.2px;text-transform:uppercase;font-weight:800;">
+                        <i class="fa-solid fa-gem"></i> Fragmentos separados — não entram no pagamento em Gold
+                    </div>
+                    <div class="dg-summary-row"><span>Valor total equivalente dos fragmentos</span><strong style="color:#c084fc;">${dgFmt(fragGold)}</strong></div>
+                    ${fragShareRows || `<div class="dg-summary-row"><span>Nenhum fragmento lançado</span><strong style="color:#777;">0 gp</strong></div>`}
                 `;
             }
 
@@ -2120,36 +2139,57 @@
                     return;
                 }
                 const banker = activePlayers.find(p => p.isBanker) || activePlayers[0];
+                const fairGoldByIdx = {};
+                activePlayers.forEach(p => {
+                    const cost = entryCostGoldByIdx[p.idx] + (p.wasteGold || 0);
+                    fairGoldByIdx[p.idx] = cost + goldShare;
+                });
                 per.innerHTML = activePlayers.map(p => {
                     const isBanker = p.idx === banker.idx;
                     const entradaPontosGold = Math.floor(((p.entryPoints || 0) / 10) * coinGold);
                     const taxaEntradaGold = p.entryTaxGold || 0;
                     const entryCost = entryCostGoldByIdx[p.idx] || 0;
                     const waste = p.wasteGold || 0;
-                    const netShare = grossShare - entryCost;
-                    const fairValue = grossShare + waste;
-                    const receiveFromBanker = isBanker ? Math.max(0, totalLootGold - fairValue) : fairValue;
+                    const totalPlayerCost = entryCost + waste;
+                    const fairGold = fairGoldByIdx[p.idx] || 0;
+                    const bankerTransfer = directGoldLoot - (fairGoldByIdx[banker.idx] || 0);
+                    const actionLabel = isBanker ? (bankerTransfer >= 0 ? 'Distribui ao time' : 'Recebe do time') : (fairGold >= 0 ? 'Recebe do banker' : 'Paga ao banker');
+                    const actionValue = isBanker ? Math.abs(bankerTransfer) : Math.abs(fairGold);
+                    const actionColor = isBanker ? (bankerTransfer >= 0 ? 'var(--primary)' : 'var(--accent-red)') : (fairGold >= 0 ? 'var(--accent-green)' : 'var(--accent-red)');
                     const playerFragLines = dgState.frags
                         .filter(f => (f.qtd || 0) > 0)
                         .map(f => {
                             const qtdEach = Math.floor((f.qtd || 0) / n);
-                            const shareEach = Math.floor(((f.qtd || 0) * (f.valueGold || 0)) / n);
-                            return `<div style="font-size:.72rem;color:#c084fc;margin-top:2px;">${f.name}: recebe ${qtdEach} frag = ${dgFmt(shareEach)}</div>`;
+                            const qtdSobra = (f.qtd || 0) - (qtdEach * n);
+                            const subtotal = (f.qtd || 0) * (f.valueGold || 0);
+                            const shareEach = Math.floor(subtotal / n);
+                            return `<div style="display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid rgba(192,132,252,.08);padding:3px 0;font-size:.72rem;">
+                                <span style="color:#d8b4fe;">${f.name}</span>
+                                <strong style="color:#c084fc;text-align:right;">${qtdEach} frag <span style="color:#777;">≈</span> ${dgFmt(shareEach)}${qtdSobra ? `<br><small style="color:#777;">sobra geral: ${qtdSobra} frag</small>` : ''}</strong>
+                            </div>`;
                         }).join('');
                     return `
-                        <div class="dg-per-player-card ${netShare < 0 ? 'is-negative' : ''}">
-                            <div>
-                                <div style="color:#fff;font-weight:800;">${p.name} ${isBanker ? '<span class="dg-badge"><i class="fa-solid fa-crown"></i> Banker</span>' : ''}</div>
-                                <div style="font-size:.75rem;color:#888;margin-top:4px;">Entrada pontos: ${p.entryPoints || 0} pts ≈ ${dgFmt(entradaPontosGold)}</div>
+                        <div class="dg-per-player-card ${goldShare < 0 ? 'is-negative' : ''}">
+                            <div style="width:100%;">
+                                <div style="color:#fff;font-weight:800;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${p.name} ${isBanker ? '<span class="dg-badge"><i class="fa-solid fa-crown"></i> Banker</span>' : ''}</div>
+                                <div style="font-size:.75rem;color:#888;margin-top:5px;">Entrada pontos: ${p.entryPoints || 0} pts ≈ ${dgFmt(entradaPontosGold)}</div>
                                 <div style="font-size:.75rem;color:#ffb347;margin-top:3px;">Taxa entrada Gold: ${dgFmt(taxaEntradaGold)}</div>
                                 <div style="font-size:.75rem;color:#d8b26a;margin-top:3px;">Entrada total: ${dgFmt(entryCost)}</div>
                                 <div style="font-size:.75rem;color:#ff9f9f;margin-top:3px;">Waste: ${dgFmt(waste)}</div>
-                                ${playerFragLines ? `<div style="margin-top:8px;border-top:1px solid rgba(192,132,252,.14);padding-top:6px;"><div style="font-size:.62rem;color:#888;text-transform:uppercase;font-weight:800;letter-spacing:1px;margin-bottom:3px;">Fragmentos por jogador</div>${playerFragLines}</div>` : ''}
+                                <div style="font-size:.75rem;color:#aaa;margin-top:3px;">Custo total do player: ${dgFmt(totalPlayerCost)}</div>
+
+                                <div style="margin-top:9px;border-top:1px solid rgba(255,215,0,.16);padding-top:7px;display:flex;justify-content:space-between;gap:8px;align-items:center;">
+                                    <span style="font-size:.66rem;color:#888;text-transform:uppercase;font-weight:800;letter-spacing:1px;">Gold pela regra Party Hunt</span>
+                                    <strong style="color:${goldShare >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};">${goldShare < 0 ? '-' : ''}${dgFmt(goldShare)}</strong>
+                                </div>
+
+                                ${playerFragLines ? `<div style="margin-top:10px;border-top:1px solid rgba(192,132,252,.16);padding-top:7px;"><div style="font-size:.62rem;color:#c084fc;text-transform:uppercase;font-weight:800;letter-spacing:1px;margin-bottom:5px;">Fragmentos separados por jogador</div>${playerFragLines}</div>` : ''}
                             </div>
-                            <div style="text-align:right;">
-                                <div style="font-size:.68rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:1px;">${isBanker ? 'Distribui ao time' : 'Recebe do banker'}</div>
-                                <div style="color:${isBanker ? 'var(--primary)' : 'var(--accent-green)'};font-weight:900;font-size:1.05rem;">${dgFmt(receiveFromBanker)}</div>
-                                <div style="font-size:.72rem;color:${netShare >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};margin-top:4px;">Lucro real: ${netShare < 0 ? '-' : ''}${dgFmt(netShare)}</div>
+                            <div style="text-align:right;width:100%;border-top:1px solid rgba(255,255,255,.07);padding-top:8px;margin-top:6px;">
+                                <div style="font-size:.68rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:1px;">${actionLabel}</div>
+                                <div style="color:${actionColor};font-weight:900;font-size:1.12rem;">${dgFmt(actionValue)}</div>
+                                <div style="font-size:.72rem;color:${goldShare >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};margin-top:4px;">Lucro real em Gold: ${goldShare < 0 ? '-' : ''}${dgFmt(goldShare)}</div>
+                                <div style="font-size:.62rem;color:#777;margin-top:3px;">Fragmentos não somados nesse pagamento</div>
                             </div>
                         </div>
                     `;
@@ -2163,7 +2203,7 @@
             const el = document.getElementById(id);
             if (el) el.addEventListener('input', window.dgCalculate);
         });
-        ['scleaner', 'supgrade', 'sfate', 'sancient'].forEach(id => {
+        ['cleaner','scleaner','upgrade','supgrade','fate','sfate','ancient','sancient','enchant','shuffle'].forEach(id => {
             const el = document.getElementById(`frag_${id}`);
             if (el) el.addEventListener('input', () => { window.dgRenderFrags(); window.dgCalculate(); });
         });
