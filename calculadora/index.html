@@ -565,11 +565,6 @@
             display: block;
             filter: brightness(0.65) grayscale(0.3);
             transition: filter 0.3s, transform 0.3s;
-        }
-        #nav-runas img {
-            height: auto;
-            width: 280px;
-            object-fit: contain;
         }        .nav-img-btn:hover img {
             filter: brightness(1.1) drop-shadow(0 0 10px rgba(255,215,0,0.5));
             transform: translateY(-3px) scale(1.04);
@@ -745,7 +740,7 @@
             <img src="https://i.ibb.co/Mk1H4nDT/encanttos.png" alt="Encantos">
         </button>
         <button class="nav-img-btn" id="nav-runas" onclick="switchApp('runas')" title="Calculadora de Runas">
-            <img src="https://i.ibb.co/zhLXDHVw/RUNAS.png" alt="Calculadora de Runas">
+            <img src="https://i.ibb.co/zhLXDHVw/RUNAS.png" alt="Calculadora de Runas" style="height: auto; width: 220px;">
         </button>
     </div>
 
@@ -896,12 +891,71 @@
                 </table>
             </div>
         </div>
-    </div> <div id="app-party" class="app-section">
+    </div>
+
+    <!-- ESTILOS DG HUNT -->
+    <style>
+        .party-sub-tabs {
+            display: flex; gap: 12px; justify-content: center; margin-bottom: 28px; flex-wrap: wrap;
+        }
+        .party-sub-tab-btn {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,215,0,0.15); border-radius: 14px;
+            padding: 14px 28px; color: #888; font-family: 'Cinzel Decorative', serif; font-size: 0.8rem;
+            font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 10px;
+        }
+        .party-sub-tab-btn:hover { background: rgba(255,215,0,0.08); color: var(--primary); border-color: rgba(255,215,0,0.4); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,215,0,0.12); }
+        .party-sub-tab-btn.active { background: linear-gradient(135deg, rgba(255,215,0,0.15) 0%, rgba(255,140,0,0.1) 100%); color: var(--primary); border-color: rgba(255,215,0,0.5); box-shadow: 0 0 20px rgba(255,215,0,0.15), inset 0 0 10px rgba(255,215,0,0.05); transform: translateY(-3px); }
+        .party-sub-section { display: none; width: 100%; }
+        .party-sub-section.active { display: flex; flex-direction: column; align-items: center; }
+        .dg-tiers { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
+        .dg-tier-btn { background: rgba(0,0,0,0.6); border: 2px solid rgba(255,215,0,0.2); border-radius: 12px; padding: 12px 20px; color: #888; font-family: 'Poppins', sans-serif; font-size: 0.95rem; font-weight: 800; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 90px; }
+        .dg-tier-btn .tier-cost { font-size: 0.65rem; font-family: 'Cinzel Decorative', serif; letter-spacing: 1px; color: #666; text-transform: uppercase; }
+        .dg-tier-btn:hover { border-color: rgba(255,215,0,0.5); color: var(--primary); transform: translateY(-2px); }
+        .dg-tier-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(255,215,0,0.08); box-shadow: 0 0 20px rgba(255,215,0,0.2); }
+        .dg-tier-btn.active .tier-cost { color: var(--primary-dark); }
+        .dg-result-card { background: linear-gradient(145deg, rgba(18,12,4,0.97) 0%, rgba(12,8,2,0.95) 100%); border: 1px solid rgba(160,100,10,0.25); border-top: 3px solid var(--primary); border-radius: 16px; padding: 25px 30px; width: 100%; box-sizing: border-box; margin-bottom: 20px; }
+        .dg-player-row { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px 20px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; transition: all 0.3s; }
+        .dg-player-row:hover { background: rgba(20,14,4,0.7); border-color: rgba(255,215,0,0.1); }
+        .dg-player-name-inp { background: transparent !important; border: none !important; border-bottom: 2px solid rgba(255,255,255,0.1) !important; border-radius: 0 !important; padding: 4px 8px !important; font-size: 1rem !important; color: #fff !important; font-weight: 700 !important; width: 140px !important; min-width: 80px !important; box-shadow: none !important; }
+        .dg-player-name-inp:focus { border-bottom-color: var(--primary) !important; box-shadow: none !important; background: transparent !important; }
+        .dg-frag-inp { width: 90px !important; padding: 8px 10px !important; font-size: 1rem !important; text-align: center !important; }
+        .dg-summary-row { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 12px 18px; border-radius: 10px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.04); }
+        .dg-summary-row.highlight { background: rgba(255,215,0,0.05); border-color: rgba(255,215,0,0.2); box-shadow: inset 0 0 15px rgba(255,215,0,0.04); }
+        .dg-per-player-card { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.07); border-left: 4px solid var(--primary); border-radius: 10px; padding: 14px 18px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; transition: 0.3s; }
+        .dg-per-player-card:hover { transform: translateX(4px); }
+        .dg-per-player-card.is-negative { border-left-color: var(--accent-red); }
+        .dg-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.3); color: var(--primary); border-radius: 30px; padding: 3px 12px; font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        .dg-section-title { font-family: 'Cinzel Decorative', serif; color: #b8860b; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .dg-toggle-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #666; transition: 0.3s; flex-shrink: 0; }
+        .dg-toggle-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .dg-toggle-btn.active { background: rgba(0,250,154,0.1); color: var(--accent-green); border-color: rgba(0,250,154,0.3); box-shadow: 0 0 12px rgba(0,250,154,0.15); }
+        .dg-coin-ref-box { background: rgba(255,215,0,0.04); border: 1px solid rgba(255,215,0,0.15); border-radius: 10px; padding: 10px 16px; font-size: 0.8rem; color: #c8900a; font-family: 'Cinzel Decorative', serif; letter-spacing: 1px; margin-bottom: 16px; }
+        .dg-info-box { background: rgba(0,80,200,0.05); border: 1px solid rgba(100,150,255,0.15); border-left: 3px solid rgba(100,150,255,0.4); border-radius: 10px; padding: 14px 18px; color: #9ab0e0; font-size: 0.82rem; line-height: 1.6; margin-bottom: 20px; }
+        .dg-frag-share-box { background: rgba(0,250,154,0.04); border: 1px solid rgba(0,250,154,0.12); border-radius: 10px; padding: 8px 10px; min-width: 145px; text-align: right; }
+        .dg-frag-share-box .share-label { display:block; font-size:.62rem; color:#8a6820; font-family:'Cinzel Decorative',serif; letter-spacing:1px; text-transform:uppercase; margin-bottom:5px; }
+        .dg-frag-share-box .share-value { color: var(--accent-green); font-weight:900; font-size:.92rem; }
+        @media (max-width: 700px) { .dg-player-row { flex-direction: column; align-items: flex-start; } .dg-frag-share-box { width:100%; text-align:left; } }
+    </style>
+
+    <div id="app-party" class="app-section">
         <div class="header-container">
             <img src="https://i.ibb.co/DDqcwHGL/2d423077-f22b-4023-bdfc-26be4dcfdd07.png" alt="Party Hunt Divisão" style="height: 240px; width: auto; filter: drop-shadow(0 0 18px rgba(255,180,0,0.35)); margin-bottom: 6px;">
             <p style="font-family: 'Cinzel Decorative', serif; color: #c8900a; font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase; margin: 0;">Organização e Cálculo de Loot</p>
         </div>
 
+        <!-- SUB-MENU DO PARTY HUNT -->
+        <div class="party-sub-tabs">
+            <button class="party-sub-tab-btn active" id="ptab-hunt" onclick="switchPartyTab('hunt')">
+                <i class="fa-solid fa-skull-crossbones"></i> Hunt Normal
+            </button>
+            <button class="party-sub-tab-btn" id="ptab-dg" onclick="switchPartyTab('dg')">
+                <i class="fa-solid fa-dungeon"></i> DG Hunt
+            </button>
+        </div>
+
+        <!-- SEÇÃO: HUNT NORMAL (antiga) -->
+        <div id="party-section-hunt" class="party-sub-section active" style="width:100%;">
         <div class="ph-grid">
             <div style="display: flex; flex-direction: column; gap: 20px;">
                 <div class="config-panel" style="margin-bottom: 0;">
@@ -960,7 +1014,81 @@
                 </div>
             </div>
         </div>
-    </div>
+        </div><!-- fim party-section-hunt -->
+
+        <!-- SEÇÃO: DG HUNT -->
+        <div id="party-section-dg" class="party-sub-section" style="width:100%;">
+
+            <!-- INFO BOX -->
+            <div class="dg-info-box" style="width:100%; box-sizing:border-box;">
+                <i class="fa-solid fa-circle-info" style="color:#6a90e0; margin-right:6px;"></i>
+                <strong style="color:#aac4ff;">DG Hunt</strong> — calculadora de dungeon com divisão estilo Party Hunt.
+                Some o <strong style="color:var(--primary);">Gold dropado/vendido</strong>, desconte a <strong style="color:#ff9f9f;">Waste</strong> de cada player e some os <strong style="color:#c084fc;">Fragmentos Special em Gold</strong>.
+                A entrada fica individual do lado de cada jogador: <strong style="color:#fff;">1 Coin = 10 Pontos</strong>, então a entrada em pontos vira Gold pela cotação de 1 Coin.
+                <br><span style="color:#6a80c0; font-size:0.75rem;">Os fragmentos não usam coin/pontos: eles sincronizam com o valor de fragmento Gold das Orbs no Mercado Main.</span>
+            </div>
+
+            <!-- GRID PRINCIPAL DG -->
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:24px; width:100%; box-sizing:border-box;">
+
+                <!-- COLUNA ESQUERDA -->
+                <div style="display:flex; flex-direction:column; gap:20px;">
+
+                    <!-- LOOT BASE: SOMENTE GOLD -->
+                    <div class="dg-result-card">
+                        <div class="dg-section-title"><i class="fa-solid fa-sack-dollar"></i> Loot da DG: Gold</div>
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap:16px;">
+                            <div class="form-group" style="margin:0; min-width:0;">
+                                <label>Gold dropado / vendido</label>
+                                <input type="number" id="dg-gold-loot" value="0" min="0" step="100" oninput="dgSetGoldLoot(this.value)" placeholder="Ex: 500000">
+                            </div>
+                        </div>
+                        <div style="margin-top:12px; color:#888; font-size:.78rem; line-height:1.5;">
+                            <i class="fa-solid fa-coins" style="color:var(--primary);"></i>
+                            Aqui fica só o Gold da DG. Pontos/Coin foram removidos desse loot.
+                        </div>
+                    </div>
+
+                    <!-- JOGADORES -->
+                    <div class="dg-result-card">
+                        <div class="dg-section-title"><i class="fa-solid fa-users"></i> Jogadores na DG</div>
+                        <div id="dg-players-container"></div>
+                        <div style="display:flex; gap:10px; margin-top:8px; flex-wrap:wrap;">
+                            <button onclick="dgAddPlayer()" style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.2);color:#b8860b;border-radius:8px;padding:8px 18px;font-size:0.72rem;cursor:pointer;font-family:'Cinzel Decorative',serif;letter-spacing:0.8px;text-transform:uppercase;transition:all .2s;" onmouseover="this.style.background='rgba(255,215,0,.12)'" onmouseout="this.style.background='rgba(255,215,0,.06)'">
+                                <i class="fa-solid fa-plus" style="margin-right:4px;"></i> Jogador
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- LOOT: FRAGMENTOS ESPECIAIS -->
+                    <div class="dg-result-card">
+                        <div class="dg-section-title"><i class="fa-solid fa-gem" style="color:#c084fc;"></i> Fragmentos Special (Loot da DG)</div>
+                        <div style="color:#888; font-size:0.82rem; margin-bottom:14px;">Coloque a quantidade dropada. O valor unitário em Gold sincroniza automaticamente com o valor do fragmento da Orb no Mercado Main.</div>
+                        <div id="dg-frags-container"></div>
+                        <div style="margin-top:10px;color:#777;font-size:.75rem;line-height:1.5;"><i class="fa-solid fa-lock" style="color:#a855f7;margin-right:4px;"></i> Lista fixa com os Special Fragments. O valor unitário vem sincronizado do mercado; alterou o valor da Orb lá em cima, atualiza aqui também.</div>
+                    </div>
+                </div>
+
+                <!-- COLUNA DIREITA: RESULTADO -->
+                <div style="position:sticky; top:20px; align-self:start; display:flex; flex-direction:column; gap:16px;">
+
+                    <!-- RESUMO GERAL -->
+                    <div class="dg-result-card" style="border-top-color: var(--primary);">
+                        <div class="dg-section-title"><i class="fa-solid fa-calculator"></i> Extrato DG</div>
+                        <div id="dg-summary-box"></div>
+                    </div>
+
+                    <!-- POR JOGADOR -->
+                    <div class="dg-result-card" style="border-top-color: #a855f7;">
+                        <div class="dg-section-title" style="color:#c084fc;"><i class="fa-solid fa-right-left" style="color:#a855f7;"></i> Divisão por Jogador</div>
+                        <div id="dg-perplayer-box"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div><!-- fim party-section-dg -->
+
+    </div><!-- fim app-party -->
 
     <div id="app-enchant" class="app-section">
         <div class="header-container">
@@ -1747,6 +1875,278 @@
         }
         window.phRender();
 
+        // ==========================================
+        // 2.1 LÓGICA DO DG HUNT (Local)
+        // ==========================================
+        const dgState = {
+            goldLoot: 0,
+            players: [
+                { name: 'Jogador 1', active: true, isBanker: true, entryPoints: 50, wasteGold: 0 },
+                { name: 'Jogador 2', active: true, isBanker: false, entryPoints: 50, wasteGold: 0 },
+                { name: 'Jogador 3', active: true, isBanker: false, entryPoints: 50, wasteGold: 0 },
+                { name: 'Jogador 4', active: true, isBanker: false, entryPoints: 50, wasteGold: 0 }
+            ],
+            frags: [
+                { id: 'scleaner', name: 'Special Cleaner Fragment', qtd: 0, valueGold: 0 },
+                { id: 'supgrade', name: 'Special Upgrade Fragment', qtd: 0, valueGold: 0 },
+                { id: 'sfate', name: 'Special Fate Fragment', qtd: 0, valueGold: 0 },
+                { id: 'sancient', name: 'Special Ancient Fragment', qtd: 0, valueGold: 0 }
+            ]
+        };
+
+        const dgFmt = (num) => new Intl.NumberFormat('pt-BR').format(Math.round(Math.abs(num || 0))) + ' gp';
+        const dgNum = (v) => parseInt(String(v || '0').replace(/\D/g, '')) || 0;
+
+        function dgCoinGoldValue() {
+            return dgNum(document.getElementById('coinGold')?.value) || 0;
+        }
+
+        function dgSyncFragValuesFromMarket() {
+            dgState.frags.forEach(f => {
+                const marketInput = document.getElementById(`frag_${f.id}`);
+                if (marketInput) f.valueGold = dgNum(marketInput.value);
+            });
+        }
+
+        window.switchPartyTab = function(tab) {
+            document.querySelectorAll('.party-sub-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.party-sub-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(`ptab-${tab}`)?.classList.add('active');
+            document.getElementById(`party-section-${tab}`)?.classList.add('active');
+            if (tab === 'dg') window.dgCalculate();
+        };
+
+        // Entrada da DG agora é individual por jogador.
+
+        window.dgSetGoldLoot = function(value) { dgState.goldLoot = dgNum(value); window.dgCalculate(); };
+                window.dgAddPlayer = function() {
+            dgState.players.push({ name: `Jogador ${dgState.players.length + 1}`, active: true, isBanker: false, entryPoints: 50, wasteGold: 0 });
+            window.dgRenderPlayers();
+        };
+
+        window.dgRemovePlayer = function(idx) {
+            if (dgState.players.length <= 1) return;
+            const wasBanker = dgState.players[idx].isBanker;
+            dgState.players.splice(idx, 1);
+            if (wasBanker && dgState.players.length) dgState.players[0].isBanker = true;
+            window.dgRenderPlayers();
+        };
+
+        window.dgTogglePlayer = function(idx) {
+            dgState.players[idx].active = !dgState.players[idx].active;
+            if (!dgState.players[idx].active && dgState.players[idx].isBanker) {
+                dgState.players[idx].isBanker = false;
+                const next = dgState.players.find(p => p.active);
+                if (next) next.isBanker = true;
+            }
+            window.dgRenderPlayers();
+        };
+
+        window.dgSetBanker = function(idx) {
+            dgState.players.forEach(p => p.isBanker = false);
+            dgState.players[idx].isBanker = true;
+            if (!dgState.players[idx].active) dgState.players[idx].active = true;
+            window.dgRenderPlayers();
+        };
+
+        window.dgUpdatePlayerName = function(idx, value) {
+            dgState.players[idx].name = value || `Jogador ${idx + 1}`;
+            window.dgRenderPlayers();
+        };
+
+        window.dgUpdatePlayerEntry = function(idx, value) {
+            dgState.players[idx].entryPoints = dgNum(value);
+            window.dgCalculate();
+        };
+
+        window.dgUpdatePlayerWaste = function(idx, value) {
+            dgState.players[idx].wasteGold = dgNum(value);
+            window.dgCalculate();
+        };
+
+        window.dgUpdateFrag = function(idx, field, value) {
+            if (field === 'qtd') dgState.frags[idx].qtd = dgNum(value);
+            if (field === 'valueGold') dgState.frags[idx].valueGold = dgNum(value);
+            window.dgCalculate();
+        };
+
+        window.dgRenderPlayers = function() {
+            const container = document.getElementById('dg-players-container');
+            if (!container) return;
+            container.innerHTML = dgState.players.map((p, idx) => `
+                <div class="dg-player-row ${p.active ? '' : 'inactive'}" style="opacity:${p.active ? 1 : .45};">
+                    <button class="dg-toggle-btn ${p.active ? 'active' : ''}" onclick="dgTogglePlayer(${idx})" title="Ativar/Desativar"><i class="fa-solid fa-power-off"></i></button>
+                    <button class="dg-toggle-btn ${p.isBanker ? 'active' : ''}" onclick="dgSetBanker(${idx})" title="Quem segurou o loot"><i class="fa-solid fa-crown"></i></button>
+                    <input class="dg-player-name-inp" type="text" value="${p.name}" onchange="dgUpdatePlayerName(${idx}, this.value)" ${!p.active ? 'disabled' : ''}>
+                    <div style="display:flex;flex-direction:column;gap:5px;min-width:110px;">
+                        <span style="font-size:.62rem;color:#8a6820;font-family:'Cinzel Decorative',serif;letter-spacing:1px;text-transform:uppercase;">Entrada pts</span>
+                        <input class="dg-frag-inp" type="number" value="${p.entryPoints ?? 0}" oninput="dgUpdatePlayerEntry(${idx}, this.value)" ${!p.active ? 'disabled' : ''} placeholder="0">
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:5px;min-width:110px;">
+                        <span style="font-size:.62rem;color:#8a6820;font-family:'Cinzel Decorative',serif;letter-spacing:1px;text-transform:uppercase;">Waste Gold</span>
+                        <input class="dg-frag-inp" type="number" value="${p.wasteGold ?? 0}" oninput="dgUpdatePlayerWaste(${idx}, this.value)" ${!p.active ? 'disabled' : ''} placeholder="0" style="color:#ff7070 !important;">
+                    </div>
+                    <span class="dg-badge" style="${p.isBanker ? '' : 'opacity:.35'}"><i class="fa-solid fa-vault"></i> ${p.isBanker ? 'Banker' : 'Membro'}</span>
+                    <button onclick="dgRemovePlayer(${idx})" title="Remover jogador" style="margin-left:auto;background:rgba(255,51,51,.06);border:1px solid rgba(255,51,51,.18);color:#ff7070;border-radius:8px;padding:8px 10px;cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `).join('');
+            window.dgCalculate();
+        };
+
+        window.dgRenderFrags = function() {
+            dgSyncFragValuesFromMarket();
+            const container = document.getElementById('dg-frags-container');
+            if (!container) return;
+            const activeCount = dgState.players.filter(p => p.active).length || 1;
+            container.innerHTML = dgState.frags.map((f, idx) => {
+                const subtotal = (f.qtd || 0) * (f.valueGold || 0);
+                const qtdEach = Math.floor((f.qtd || 0) / activeCount);
+                const qtdSobra = (f.qtd || 0) - (qtdEach * activeCount);
+                const shareEach = Math.floor(subtotal / activeCount);
+                const sobra = subtotal - (shareEach * activeCount);
+                return `
+                <div class="dg-player-row" style="align-items:center;">
+                    <div style="display:flex;flex-direction:column;gap:6px;min-width:210px;flex:1;">
+                        <span style="font-size:.68rem;color:#8a6820;font-family:'Cinzel Decorative',serif;letter-spacing:1px;text-transform:uppercase;">Special Fragment</span>
+                        <div style="color:#fff;font-weight:900;font-size:.95rem;"><i class="fa-solid fa-gem" style="color:#c084fc;margin-right:6px;"></i>${f.name}</div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:6px;">
+                        <span style="font-size:.68rem;color:#8a6820;font-family:'Cinzel Decorative',serif;letter-spacing:1px;text-transform:uppercase;">Qtd.</span>
+                        <input class="dg-frag-inp" type="number" value="${f.qtd || ''}" oninput="dgUpdateFrag(${idx}, 'qtd', this.value)" placeholder="0">
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:6px;min-width:125px;">
+                        <span style="font-size:.68rem;color:#8a6820;font-family:'Cinzel Decorative',serif;letter-spacing:1px;text-transform:uppercase;">Valor un. Gold</span>
+                        <input class="dg-frag-inp" id="dg_frag_value_${f.id}" type="number" value="${f.valueGold || ''}" disabled title="Sincronizado com Mercado Main" placeholder="Gold">
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:6px;min-width:135px;text-align:right;">
+                        <span style="font-size:.68rem;color:#8a6820;font-family:'Cinzel Decorative',serif;letter-spacing:1px;text-transform:uppercase;">Subtotal Gold</span>
+                        <div id="dg_frag_subtotal_${f.id}" style="color:#c084fc;font-weight:800;">${dgFmt(subtotal)}</div>
+                    </div>
+                    <div class="dg-frag-share-box" title="Quanto desse fragmento fica para cada jogador ativo">
+                        <span class="share-label">Cada jogador</span>
+                        <span class="share-value" id="dg_frag_share_${f.id}">${dgFmt(shareEach)}</span>
+                        <div id="dg_frag_qtd_share_${f.id}" style="font-size:.72rem;color:#c084fc;margin-top:4px;font-weight:800;">${qtdEach} frag / jogador</div>
+                        <div id="dg_frag_share_info_${f.id}" style="font-size:.62rem;color:#777;margin-top:3px;">${activeCount} players${qtdSobra ? ` • sobra ${qtdSobra} frag` : ''}${sobra ? ` • sobra ${dgFmt(sobra)}` : ''}</div>
+                    </div>
+                </div>`;
+            }).join('');
+            window.dgCalculate();
+        };
+
+        window.dgCalculate = function() {
+            dgSyncFragValuesFromMarket();
+            const coinGold = dgCoinGoldValue();
+            const activePlayers = dgState.players.map((p, idx) => ({ ...p, idx })).filter(p => p.active);
+            if (activePlayers.length && !activePlayers.some(p => p.isBanker)) {
+                dgState.players[activePlayers[0].idx].isBanker = true;
+                activePlayers[0].isBanker = true;
+            }
+
+            const n = activePlayers.length || 1;
+            const entryCostGoldByIdx = {};
+            activePlayers.forEach(p => {
+                entryCostGoldByIdx[p.idx] = Math.floor(((p.entryPoints || 0) / 10) * coinGold);
+            });
+            const entryCostGoldTotal = activePlayers.reduce((sum, p) => sum + (entryCostGoldByIdx[p.idx] || 0), 0);
+            const wasteGoldTotal = activePlayers.reduce((sum, p) => sum + (p.wasteGold || 0), 0);
+            dgState.frags.forEach((f) => {
+                const subtotal = (f.qtd || 0) * (f.valueGold || 0);
+                const qtdEach = Math.floor((f.qtd || 0) / n);
+                const qtdSobra = (f.qtd || 0) - (qtdEach * n);
+                const shareEach = Math.floor(subtotal / n);
+                const sobra = subtotal - (shareEach * n);
+                const valueInput = document.getElementById(`dg_frag_value_${f.id}`);
+                const subEl = document.getElementById(`dg_frag_subtotal_${f.id}`);
+                const shareEl = document.getElementById(`dg_frag_share_${f.id}`);
+                const qtdShareEl = document.getElementById(`dg_frag_qtd_share_${f.id}`);
+                const infoEl = document.getElementById(`dg_frag_share_info_${f.id}`);
+                if (valueInput) valueInput.value = f.valueGold || '';
+                if (subEl) subEl.innerText = dgFmt(subtotal);
+                if (shareEl) shareEl.innerText = dgFmt(shareEach);
+                if (qtdShareEl) qtdShareEl.innerText = `${qtdEach} frag / jogador`;
+                if (infoEl) infoEl.innerText = `${n} players${qtdSobra ? ` • sobra ${qtdSobra} frag` : ''}${sobra ? ` • sobra ${dgFmt(sobra)}` : ''}`;
+            });
+            const fragGold = dgState.frags.reduce((sum, f) => sum + ((f.qtd || 0) * (f.valueGold || 0)), 0);
+            const fragShareRows = dgState.frags
+                .filter(f => (f.qtd || 0) > 0)
+                .map(f => {
+                    const subtotal = (f.qtd || 0) * (f.valueGold || 0);
+                    const qtdEach = Math.floor((f.qtd || 0) / n);
+                    const qtdSobra = (f.qtd || 0) - (qtdEach * n);
+                    const shareEach = Math.floor(subtotal / n);
+                    const sobra = subtotal - (shareEach * n);
+                    return `<div class="dg-summary-row"><span>${f.name} — ${f.qtd}x</span><strong style="color:#c084fc;">${qtdEach} frag + ${dgFmt(shareEach)} / jogador${qtdSobra ? ` <small style="color:#777;">(+ sobra ${qtdSobra} frag)</small>` : ''}${sobra ? ` <small style="color:#777;">(+ sobra ${dgFmt(sobra)})</small>` : ''}</strong></div>`;
+                }).join('');
+            const totalLootGold = dgState.goldLoot + fragGold;
+            const balanceAfterWaste = totalLootGold - wasteGoldTotal;
+            const grossShare = Math.floor(balanceAfterWaste / n);
+
+            const summary = document.getElementById('dg-summary-box');
+            if (summary) {
+                summary.innerHTML = `
+                    <div class="dg-summary-row"><span>Gold direto</span><strong class="currency-gold">${dgFmt(dgState.goldLoot)}</strong></div>
+                    <div class="dg-summary-row"><span>Fragmentos Special (sincronizado em Gold)</span><strong style="color:#c084fc;">${dgFmt(fragGold)}</strong></div>
+                    ${fragShareRows || '<div class="dg-summary-row"><span>Divisão dos fragmentos</span><strong style="color:#777;">Informe a quantidade dropada</strong></div>'}
+                    <div class="dg-summary-row highlight"><span>Total do loot em Gold</span><strong class="currency-gold" style="font-size:1.15rem;">${dgFmt(totalLootGold)}</strong></div>
+                    <div class="dg-summary-row"><span>Waste total</span><strong style="color:#ff7070;">${dgFmt(wasteGoldTotal)}</strong></div>
+                    <div class="dg-summary-row"><span>Loot depois da Waste</span><strong style="color:${balanceAfterWaste >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};">${balanceAfterWaste < 0 ? '-' : ''}${dgFmt(balanceAfterWaste)}</strong></div>
+                    <div class="dg-summary-row"><span>Jogadores ativos</span><strong>${activePlayers.length}</strong></div>
+                    <div class="dg-summary-row"><span>Custo entrada total dos jogadores</span><strong style="color:#ffb347;">${dgFmt(entryCostGoldTotal)}</strong></div>
+                    <div class="dg-summary-row highlight"><span>Parte após waste por jogador</span><strong style="color:var(--accent-green);font-size:1.15rem;">${grossShare < 0 ? '-' : ''}${dgFmt(grossShare)}</strong></div>
+                `;
+            }
+
+            const per = document.getElementById('dg-perplayer-box');
+            if (per) {
+                if (!activePlayers.length) {
+                    per.innerHTML = `<div style="text-align:center;color:#666;padding:20px;font-weight:bold;">Nenhum jogador ativo.</div>`;
+                    return;
+                }
+                const banker = activePlayers.find(p => p.isBanker) || activePlayers[0];
+                per.innerHTML = activePlayers.map(p => {
+                    const isBanker = p.idx === banker.idx;
+                    const entryCost = entryCostGoldByIdx[p.idx] || 0;
+                    const waste = p.wasteGold || 0;
+                    const netShare = grossShare - entryCost;
+                    const fairValue = grossShare + waste;
+                    const receiveFromBanker = isBanker ? Math.max(0, totalLootGold - fairValue) : fairValue;
+                    const playerFragLines = dgState.frags
+                        .filter(f => (f.qtd || 0) > 0)
+                        .map(f => {
+                            const qtdEach = Math.floor((f.qtd || 0) / n);
+                            const shareEach = Math.floor(((f.qtd || 0) * (f.valueGold || 0)) / n);
+                            return `<div style="font-size:.72rem;color:#c084fc;margin-top:2px;">${f.name}: ${qtdEach} frag ≈ ${dgFmt(shareEach)}</div>`;
+                        }).join('');
+                    return `
+                        <div class="dg-per-player-card ${netShare < 0 ? 'is-negative' : ''}">
+                            <div>
+                                <div style="color:#fff;font-weight:800;">${p.name} ${isBanker ? '<span class="dg-badge"><i class="fa-solid fa-crown"></i> Banker</span>' : ''}</div>
+                                <div style="font-size:.75rem;color:#888;margin-top:4px;">Entrada individual: ${p.entryPoints || 0} pontos ≈ ${dgFmt(entryCost)}</div>
+                                <div style="font-size:.75rem;color:#ff9f9f;margin-top:3px;">Waste: ${dgFmt(waste)}</div>
+                                ${playerFragLines ? `<div style="margin-top:8px;border-top:1px solid rgba(192,132,252,.14);padding-top:6px;"><div style="font-size:.62rem;color:#888;text-transform:uppercase;font-weight:800;letter-spacing:1px;margin-bottom:3px;">Fragmentos por jogador</div>${playerFragLines}</div>` : ''}
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:.68rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:1px;">${isBanker ? 'Distribui ao time' : 'Recebe do banker'}</div>
+                                <div style="color:${isBanker ? 'var(--primary)' : 'var(--accent-green)'};font-weight:900;font-size:1.05rem;">${dgFmt(receiveFromBanker)}</div>
+                                <div style="font-size:.72rem;color:${netShare >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'};margin-top:4px;">Lucro real: ${netShare < 0 ? '-' : ''}${dgFmt(netShare)}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        };
+
+        window.dgRenderPlayers();
+        window.dgRenderFrags();
+        ['coinGold', 'dg-gold-loot'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', window.dgCalculate);
+        });
+        ['scleaner', 'supgrade', 'sfate', 'sancient'].forEach(id => {
+            const el = document.getElementById(`frag_${id}`);
+            if (el) el.addEventListener('input', () => { window.dgRenderFrags(); window.dgCalculate(); });
+        });
+
 
         // ==========================================
         // 3. LÓGICA DA CALCULADORA E FIREBASE BLINDADO
@@ -2117,6 +2517,7 @@
                 const eRCoinR = document.getElementById(`coinRunaRook_${runa.id}`); if(eRCoinR) eRCoinR.innerText = (coinGoldRook > 0 ? (custo1kGoldRook / coinGoldRook) : 0).toFixed(0); 
                 const eRBrlR = document.getElementById(`brlRunaRook_${runa.id}`); if(eRBrlR) eRBrlR.innerText = `R$ ${(custo1kGoldRook * valor1GoldBrlRook).toFixed(2).replace('.', ',')}`;
             });
+            if (typeof window.dgCalculate === 'function') window.dgCalculate();
         }
 
         // Renderiza tudo na hora para evitar F5 fantasma
